@@ -746,7 +746,7 @@ namespace NetPlan.BLL
 #if WEB
                 myStartInfo.FileName =Path.GetDirectoryName(GlobalInfo.Instance.ConfigParam.EDSLoadAppFile) ;
                 myStartInfo.UseShellExecute = false;
-                myStartInfo.RedirectStandardOutput = true;
+                myStartInfo.RedirectStandardOutput = false;
                 myStartInfo.FileName = Path.GetFileName(GlobalInfo.Instance.ConfigParam.EDSLoadAppFile);
 #else
                 myStartInfo.FileName = string.Format("{0} ", GlobalInfo.Instance.ConfigParam.EDSLoadAppFile);
@@ -760,19 +760,19 @@ namespace NetPlan.BLL
 
                 myProcess.Start();
                 #region 输出打印
-                myProcess.OutputDataReceived += (s, _e) => JLog.Instance.AppInfo(_e.Data);
+                //myProcess.OutputDataReceived += (s, _e) => JLog.Instance.AppInfo(_e.Data);
 
-                myProcess.ErrorDataReceived += (s, _e) => JLog.Instance.AppInfo(_e.Data);
+                //myProcess.ErrorDataReceived += (s, _e) => JLog.Instance.AppInfo(_e.Data);
 
-                //当EnableRaisingEvents为true，进程退出时Process会调用下面的委托函数
-              
-                myProcess.Exited += (s, _e) => JLog.Instance.AppInfo("Exited with " + myProcess.ExitCode);
+                ////当EnableRaisingEvents为true，进程退出时Process会调用下面的委托函数
 
-                myProcess.EnableRaisingEvents = true;
+                //myProcess.Exited += (s, _e) => JLog.Instance.AppInfo("Exited with " + myProcess.ExitCode);
 
-                myProcess.BeginOutputReadLine();
+                //myProcess.EnableRaisingEvents = true;
 
-                myProcess.BeginErrorReadLine();
+                //myProcess.BeginOutputReadLine();
+
+                //myProcess.BeginErrorReadLine();
                 #endregion
 
 

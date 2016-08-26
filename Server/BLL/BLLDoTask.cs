@@ -743,13 +743,39 @@ namespace NetPlan.BLL
             try
             {
                 System.Diagnostics.ProcessStartInfo myStartInfo = new System.Diagnostics.ProcessStartInfo();
+#if WEB
+                myStartInfo.FileName =Path.GetDirectoryName(GlobalInfo.Instance.ConfigParam.EDSLoadAppFile) ;
+                myStartInfo.UseShellExecute = false;
+                myStartInfo.RedirectStandardOutput = true;
+                myStartInfo.FileName = Path.GetFileName(GlobalInfo.Instance.ConfigParam.EDSLoadAppFile);
+#else
                 myStartInfo.FileName = string.Format("{0} ", GlobalInfo.Instance.ConfigParam.EDSLoadAppFile);
+#endif
+
                 myStartInfo.CreateNoWindow = false; 
                 myStartInfo.Arguments = Command;
 
                 System.Diagnostics.Process myProcess = new System.Diagnostics.Process();
                 myProcess.StartInfo = myStartInfo;
+
                 myProcess.Start();
+                #region 输出打印
+                myProcess.OutputDataReceived += (s, _e) => JLog.Instance.AppInfo(_e.Data);
+
+                myProcess.ErrorDataReceived += (s, _e) => JLog.Instance.AppInfo(_e.Data);
+
+                //当EnableRaisingEvents为true，进程退出时Process会调用下面的委托函数
+              
+                myProcess.Exited += (s, _e) => JLog.Instance.AppInfo("Exited with " + myProcess.ExitCode);
+
+                myProcess.EnableRaisingEvents = true;
+
+                myProcess.BeginOutputReadLine();
+
+                myProcess.BeginErrorReadLine();
+                #endregion
+
+
                 myProcess.WaitForExit(WaitForTime); //等待程序退出 
                 return true;
             }

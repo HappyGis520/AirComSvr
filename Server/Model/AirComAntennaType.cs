@@ -15,11 +15,11 @@ namespace NetPlan.Model
     /// </summary>
     public class AirComAntennaType
     {
-        protected int _SectorID = 0;
+        protected string _SectorID = "wjj";
         /// <summary>
         /// 扇区编号
         /// </summary>
-        public int SectorId
+        public string SectorId
         {
             get { return _SectorID; }
             set { _SectorID = value; }

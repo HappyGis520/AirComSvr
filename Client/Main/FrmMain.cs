@@ -33,7 +33,7 @@ namespace NetPlanClient
         /// <summary>
         /// 天线列表
         /// </summary>
-        private Dictionary<int, List<AirComAntennaType>> Sectors = new Dictionary<int, List<AirComAntennaType>>();
+        private Dictionary<string, List<AirComAntennaType>> Sectors = new Dictionary<string, List<AirComAntennaType>>();
         /// <summary>
         /// 天线列表
         /// </summary>
@@ -186,12 +186,12 @@ namespace NetPlanClient
             _frmSector.ShowDialog();
 
         }
-        private void SubDoAppenSectorEvent(int SectorID, IList<AirComAntennaType> AntennaTypes)
+        private void SubDoAppenSectorEvent(string SectorID, IList<AirComAntennaType> AntennaTypes)
         {
             if (this.InvokeRequired)
             {
                 object[] Params = new object[] { SectorID, AntennaTypes };
-                this.Invoke(new Action<int, IList<AirComAntennaType>>(this.SubDoAppenSectorEvent), Params);
+                this.Invoke(new Action<string, IList<AirComAntennaType>>(this.SubDoAppenSectorEvent), Params);
                 return;
 
             }
@@ -210,7 +210,7 @@ namespace NetPlanClient
         /// </summary>
         /// <param name="SectorID"></param>
         /// <param name="AntennaTypes"></param>
-        private void AppendSectorInfo(int SectorID, IList<AirComAntennaType> AntennaTypes)
+        private void AppendSectorInfo(string SectorID, IList<AirComAntennaType> AntennaTypes)
         {
             try
             {
@@ -247,7 +247,7 @@ namespace NetPlanClient
         /// </summary>
         /// <param name="SectorID"></param>
         /// <param name="MyAntennaTypes"></param>
-        protected void EditSectors(int SectorID, List<AirComAntennaType> MyAntennaTypes)
+        protected void EditSectors(string SectorID, List<AirComAntennaType> MyAntennaTypes)
         {
             FrmSector _frmSector = new FrmSector();
             _frmSector.LoadSectorInfo(SectorID, MyAntennaTypes);
@@ -263,7 +263,7 @@ namespace NetPlanClient
         /// <param name="AllAntennas">所有天线的信息</param>
         /// <param name="Savedir">保存目录</param>
         /// <returns></returns>
-        private bool BuilLTEXMLFiles(AirComLTENodeBaseInfo BaseInfo, Dictionary<int, List<AirComAntennaType>> Sectors, List<AirComAntennaType> AllAntennas, string Savedir)
+        private bool BuilLTEXMLFiles(AirComLTENodeBaseInfo BaseInfo, Dictionary<string, List<AirComAntennaType>> Sectors, List<AirComAntennaType> AllAntennas, string Savedir)
         {
             //LTENodeType _LteNode = new LTENodeType();
 
@@ -348,7 +348,7 @@ namespace NetPlanClient
                     data.CellSectors.Add(new CellSector()
                     {
                         Antenners = sector.Value,
-                        CellID = sector.Key
+                        CellID = index+1
                     });
                     index++;
                 }
@@ -396,7 +396,7 @@ namespace NetPlanClient
                     data.CellSectors[0] = new CellSector()
                     {
                         Antenners = sector.Value,
-                        CellID = sector.Key
+                        CellID = index+1
                     };
                     index++;
                 }
@@ -504,7 +504,7 @@ namespace NetPlanClient
                 foreach (var sector in Sectors)
                 {
                     AirComService.CellSector sec = new AirComService.CellSector();
-                    sec.CellID = sector.Key;
+                    //sec.CellID = sector.Key;
                     sec.Antenners = new AirComService.AirComAntennaType[sector.Value.Count];
                     int Index = 0;
                     foreach (var cell in sector.Value)
@@ -526,11 +526,13 @@ namespace NetPlanClient
                                 LongitudeSpecified1 = cell.Location.LongitudeSpecified
                             },
                             MechanicalDownTilt = cell.MechanicalDownTilt,
-                            ModelType = cell.ModelType
+                            ModelType = cell.ModelType,
+                            SectorId = cell.SectorId
                         };
                         Index++;
                     }
-                    sec.CellID = sector.Key;
+                    
+                    sec.CellID = n+1;
                     data.CellSectors[n] = sec;
                     n++;
 

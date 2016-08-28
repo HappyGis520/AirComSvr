@@ -30,12 +30,12 @@ namespace NetPlanClient
         }
 
 
-        public void LoadSectorInfo(int SectorID, List<AirComAntennaType> AntennaTypes)
+        public void LoadSectorInfo(string SectorID, List<AirComAntennaType> AntennaTypes)
         {
             if (this.InvokeRequired)
             {
                 object[] Params = new object[] {SectorID,AntennaTypes};
-                this.Invoke(new Action<int,List<AirComAntennaType>>(this.LoadSectorInfo), Params);
+                this.Invoke(new Action<string,List<AirComAntennaType>>(this.LoadSectorInfo), Params);
                 return;
 
             }
@@ -100,9 +100,7 @@ namespace NetPlanClient
             try
             {
                 string SectorID = txtSectorID.Text.Trim();
-                int CellID = 0;
-                if (int.TryParse(SectorID, out CellID))
-                {
+
 
 
                     if (string.IsNullOrEmpty(SectorID))
@@ -116,15 +114,11 @@ namespace NetPlanClient
                     for (int index = 0; index < _Antennas.Count; index++)
                     {
                         var obj = _Antennas[index];
-                        obj.SectorId = CellID;
+                        obj.SectorId = SectorID;
                     }
-                    RaiseAppendSectorEvent(CellID, _Antennas);
+                    RaiseAppendSectorEvent(SectorID, _Antennas);
                     Close();
-                }
-                else
-                {
-                    MessageBox.Show("扇区编号输入有误");
-                }
+
             }
             catch (Exception ex)
             {
@@ -201,9 +195,9 @@ namespace NetPlanClient
 
         #region AppendSectorEvent
 
-        protected  Action<int,IList<AirComAntennaType>> AppendSectorEvent;
+        protected  Action<string, IList<AirComAntennaType>> AppendSectorEvent;
 
-        protected void RaiseAppendSectorEvent(int SectorID, IList<AirComAntennaType> AntennaTypes)
+        protected void RaiseAppendSectorEvent(string SectorID, IList<AirComAntennaType> AntennaTypes)
         {
             if (AppendSectorEvent != null)
             {
@@ -212,7 +206,7 @@ namespace NetPlanClient
 
         }
 
-        public void RegistAppendSectorEvent(Action<int,IList<AirComAntennaType>> handle)
+        public void RegistAppendSectorEvent(Action<string, IList<AirComAntennaType>> handle)
         {
             //DeRegistAppendSectorEvent(handle);
             AppendSectorEvent = handle;
@@ -220,7 +214,7 @@ namespace NetPlanClient
 
         }
 
-        public void DeRegistAppendSectorEvent(Action<int,IList<AirComAntennaType>> handle)
+        public void DeRegistAppendSectorEvent(Action<string, IList<AirComAntennaType>> handle)
         {
             AppendSectorEvent = null;
 
@@ -231,17 +225,17 @@ namespace NetPlanClient
         private void txtSectorID_KeyPress(object sender, KeyPressEventArgs e)
         {
 
-            try
-            {
-               int kc = (int)e.KeyChar;  
-               if ((kc < 48 || kc > 57) && kc != 8)  
-                   e.Handled = true;  
-            }
-            catch (Exception)
-            {
+            //try
+            //{
+            //   int kc = (int)e.KeyChar;  
+            //   if ((kc < 48 || kc > 57) && kc != 8)  
+            //       e.Handled = true;  
+            //}
+            //catch (Exception)
+            //{
                 
-                throw;
-            }
+            //    throw;
+            //}
 
         }
 

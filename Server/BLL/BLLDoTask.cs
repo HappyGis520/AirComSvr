@@ -744,10 +744,13 @@ namespace NetPlan.BLL
             {
                 System.Diagnostics.ProcessStartInfo myStartInfo = new System.Diagnostics.ProcessStartInfo();
 #if WEB
-                myStartInfo.FileName =Path.GetDirectoryName(GlobalInfo.Instance.ConfigParam.EDSLoadAppFile) ;
+                //myStartInfo.FileName =Path.GetDirectoryName(GlobalInfo.Instance.ConfigParam.EDSLoadAppFile) ;
                 myStartInfo.UseShellExecute = false;
-                myStartInfo.RedirectStandardOutput = false;
-                myStartInfo.FileName = Path.GetFileName(GlobalInfo.Instance.ConfigParam.EDSLoadAppFile);
+                myStartInfo.RedirectStandardOutput = true;
+                myStartInfo.RedirectStandardError = true;
+                //myStartInfo.RedirectStandardInput = true;
+                //myStartInfo.FileName = Path.GetFileName(GlobalInfo.Instance.ConfigParam.EDSLoadAppFile);
+                myStartInfo.FileName = string.Format("{0} ", GlobalInfo.Instance.ConfigParam.EDSLoadAppFile);
 #else
                 myStartInfo.FileName = string.Format("{0} ", GlobalInfo.Instance.ConfigParam.EDSLoadAppFile);
 #endif
@@ -760,19 +763,19 @@ namespace NetPlan.BLL
 
                 myProcess.Start();
                 #region 输出打印
-                //myProcess.OutputDataReceived += (s, _e) => JLog.Instance.AppInfo(_e.Data);
+                myProcess.OutputDataReceived += (s, _e) => JLog.Instance.AppInfo(string.Format("输出打印：Output:{0}", _e.Data) );
 
-                //myProcess.ErrorDataReceived += (s, _e) => JLog.Instance.AppInfo(_e.Data);
+                myProcess.ErrorDataReceived += (s, _e) => JLog.Instance.AppInfo(string.Format("输出打印：Error:{0}", _e.Data));
 
-                ////当EnableRaisingEvents为true，进程退出时Process会调用下面的委托函数
+                //当EnableRaisingEvents为true，进程退出时Process会调用下面的委托函数
 
-                //myProcess.Exited += (s, _e) => JLog.Instance.AppInfo("Exited with " + myProcess.ExitCode);
+                myProcess.Exited += (s, _e) => JLog.Instance.AppInfo("Exited with " + myProcess.ExitCode);
 
-                //myProcess.EnableRaisingEvents = true;
+                myProcess.EnableRaisingEvents = true;
 
-                //myProcess.BeginOutputReadLine();
+                myProcess.BeginOutputReadLine();
 
-                //myProcess.BeginErrorReadLine();
+                myProcess.BeginErrorReadLine();
                 #endregion
 
 

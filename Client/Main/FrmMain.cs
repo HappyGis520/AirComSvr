@@ -530,6 +530,7 @@ namespace NetPlanClient
                         };
                         Index++;
                     }
+                    sec.CellID = sector.Key;
                     data.CellSectors[n] = sec;
                     n++;
 

@@ -458,7 +458,7 @@ namespace NetPlanClient.AirComService {
         
         private AirComLocationType locationField;
         
-        private int sectorIdField;
+        private string sectorIdField;
         
         private string antennaTypeNameField;
         
@@ -495,7 +495,7 @@ namespace NetPlanClient.AirComService {
         }
         
         /// <remarks/>
-        public int SectorId {
+        public string SectorId {
             get {
                 return this.sectorIdField;
             }

@@ -743,17 +743,14 @@ namespace NetPlan.BLL
             try
             {
                 System.Diagnostics.ProcessStartInfo myStartInfo = new System.Diagnostics.ProcessStartInfo();
-#if WEB
-                //myStartInfo.FileName =Path.GetDirectoryName(GlobalInfo.Instance.ConfigParam.EDSLoadAppFile) ;
+
                 myStartInfo.UseShellExecute = false;
                 myStartInfo.RedirectStandardOutput = true;
                 myStartInfo.RedirectStandardError = true;
-                //myStartInfo.RedirectStandardInput = true;
-                //myStartInfo.FileName = Path.GetFileName(GlobalInfo.Instance.ConfigParam.EDSLoadAppFile);
                 myStartInfo.FileName = string.Format("{0} ", GlobalInfo.Instance.ConfigParam.EDSLoadAppFile);
-#else
-                myStartInfo.FileName = string.Format("{0} ", GlobalInfo.Instance.ConfigParam.EDSLoadAppFile);
-#endif
+
+
+
 
                 myStartInfo.CreateNoWindow = false; 
                 myStartInfo.Arguments = Command;
@@ -763,6 +760,7 @@ namespace NetPlan.BLL
 
                 myProcess.Start();
                 #region 输出打印
+
                 myProcess.OutputDataReceived += (s, _e) => JLog.Instance.AppInfo(string.Format("输出打印：Output:{0}", _e.Data) );
 
                 myProcess.ErrorDataReceived += (s, _e) => JLog.Instance.AppInfo(string.Format("输出打印：Error:{0}", _e.Data));
@@ -776,6 +774,7 @@ namespace NetPlan.BLL
                 myProcess.BeginOutputReadLine();
 
                 myProcess.BeginErrorReadLine();
+
                 #endregion
 
 

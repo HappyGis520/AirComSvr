@@ -483,7 +483,9 @@ namespace NetPlanClient
                 data.ProjectName = txtPrjName.Text;
                 data.WorkOrder = 1000;
                 data.CoverRadius = double.Parse(txtCoverRadius.Text);
+                
 
+                
 
                 var baseInfo = ucLTEStationType1.BuildBasicInfo();
                 baseInfo.CityName = txtCityName.Text;

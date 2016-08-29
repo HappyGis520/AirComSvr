@@ -678,7 +678,7 @@ namespace NetPlan.BLL
                     iid = "Unknown"
                 };
                 //_fe.LTECellID = (index + 1).ToString();//基站iid-天线索引号（_Antenna.Index）
-                _fe.LTECellID = Antennas[index].SectorId.ToString();//扇区ＩＤ,20151126郭琴确认
+                _fe.LTECellID =string.Format("{0}-{1}", Antennas[index].SectorId.ToString(),index+1);//扇区ＩＤ,20151126郭琴确认//20160829根据郭琴要求，修改两种对应关系，详见
                 _fe.Length = 0;
                 _fe.LengthSpecified = true;
                 _fe.DLGain = 0;
@@ -728,7 +728,7 @@ namespace NetPlan.BLL
 
                         LTECellType _LteCell = new LTECellType();
                         //_LteCell.bvid = RefLteNode.bvid;
-                        _LteCell.iid = key.ToString(); //添加扇区界面中，用户输入的扇区名称
+                        _LteCell.iid =string.Format("{0}-{1}", RefLteNode.iid, key.ToString()); //添加扇区界面中，用户输入的扇区名称
                         _LteCell.Parent = new IDType()
                         {
                             iid = RefLteNode.iid //LteNode的ＩＩＤ一致　

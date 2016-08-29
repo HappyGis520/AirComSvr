@@ -678,7 +678,7 @@ namespace NetPlan.BLL
                     iid = "Unknown"
                 };
                 //_fe.LTECellID = (index + 1).ToString();//基站iid-天线索引号（_Antenna.Index）
-                _fe.LTECellID =string.Format("{0}-{1}", Antennas[index].SectorId.ToString(),index+1);//扇区ＩＤ,20151126郭琴确认//20160829根据郭琴要求，修改两种对应关系，详见
+                _fe.LTECellID =string.Format("{0}-{1}" ,RefLteNode.iid ,index+1);//扇区ＩＤ,20151126郭琴确认//20160829根据郭琴要求，修改两种对应关系，详见
                 _fe.Length = 0;
                 _fe.LengthSpecified = true;
                 _fe.DLGain = 0;

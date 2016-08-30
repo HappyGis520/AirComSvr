@@ -724,11 +724,8 @@ namespace NetPlan.BLL
         /// <returns></returns>
         private string AutoEDSDeleteCommand(string XmlFileName, string ProjectName)
         {
-//#if WEB
-//            var cmd = string.Format("{0} -{1} -{2}=\"{3}\" -bvid=\"{4}\"", "aircom.eds.loader.exe", "Create", "input", XmlFileName, ProjectName);
-//#else
-             var cmd = string.Format(" -{1} -{2}=\"{3}\" -bvid=\"{4}\"", "aircom.eds.loader.exe", "Create", "input", XmlFileName, ProjectName);
-//#endif
+
+             var cmd = string.Format(" -{1} -{2}=\"{3}\" ", "aircom.eds.loader.exe", "delete", "input", XmlFileName);
             JLog.Instance.AppInfo(string.Format("执行删除XML命令：{0}", cmd));
             return cmd;
         }

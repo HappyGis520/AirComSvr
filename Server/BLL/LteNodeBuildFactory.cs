@@ -103,11 +103,13 @@ namespace NetPlan.BLL
 
 
         }
+
         /// <summary>
         /// 生成删除基站xml数据
         /// </summary>
+        /// <param name="ProjectName">工程名</param>
         /// <param name="LTEStations"></param>
-        public static bool  BuilLteNodeDeleteXML(List<LTENodeType> LTEStations, string SaveDir ,out string XmlFileFullName)
+        public static bool  BuilLteNodeDeleteXML(string ProjectName, List<LTENodeType> LTEStations, string SaveDir ,out string XmlFileFullName)
         {
             try
             {
@@ -136,8 +138,8 @@ namespace NetPlan.BLL
 
                 Type[] knowTypes = new[]
                 {
-                typeof(LTECellType)
-            };
+                    typeof(LTECellType)
+                };
                 List<RootEntityType> Cells = new List<RootEntityType>();
                 foreach (var obj in LTEStations)
                 {
@@ -145,7 +147,7 @@ namespace NetPlan.BLL
                     {
                         LTECellType Newtype = new LTECellType()
                         {
-                            bvid = obj.iid,
+                            bvid = ProjectName,
                             iid = cell.iid,
                         };
                         Cells.Add(Newtype);
@@ -274,7 +276,14 @@ namespace NetPlan.BLL
             try
             {
                 LocationObjectv70Type location = new LocationObjectv70Type();
-                location.bvid = GlobalInfo.Instance.ConfigParam.ProjectNames[0].ProjectName;
+                var Prjobj = GlobalInfo.Instance.ConfigParam.ProjectNames.FirstOrDefault(Fo => Fo.CityEName.Equals(BaseInfo.CityName));
+                if (Prjobj == null)
+                {
+                    JLog.Instance.AppInfo("没有找到相应的工程配置");
+                    XmlFileFullName = string.Empty;
+                    return false;
+                }
+                location.bvid = Prjobj.ProjectName;
 
                 location.iid = BaseInfo.StationId;
                 List<RootEntityType> Locations = new List<RootEntityType>();
@@ -478,11 +487,17 @@ namespace NetPlan.BLL
                 {
                     DirectoryInfo dirInfo = Directory.CreateDirectory(Savedir);
                 }
+
+                var Prjobj = GlobalInfo.Instance.ConfigParam.ProjectNames.FirstOrDefault(Fo => Fo.CityEName.Equals(BaseInfo.CityName));
+                if (Prjobj == null)
+                {
+                    JLog.Instance.AppInfo("没有找到相应的工程配置");
+                }
                 XmlFiles = new XmlFilePackageInfo();
                 JLog.Instance.AppInfo("开始生成导入基站XML文件");
                 BuildLteNodeXML(Nodes, Savedir, out XmlFiles.InputLTENodeFileFullName);
             　　JLog.Instance.AppInfo("开始生成删除基站XML文件");
-            　　BuilLteNodeDeleteXML(nodesList, Savedir, out XmlFiles.DeleteLTENodeFileFullName);
+            　　BuilLteNodeDeleteXML(Prjobj.ProjectName,　nodesList, Savedir, out XmlFiles.DeleteLTENodeFileFullName);
                 JLog.Instance.AppInfo("开始生成导入位置信息XML文件");
                 BuildLocationXML(BaseInfo, Savedir, out XmlFiles.InputLocationFileFullName);
                 JLog.Instance.AppInfo("开始生成删除位置信息XML文件");

@@ -198,7 +198,7 @@ namespace NetPlanClient.AirComService {
         
         private AirComLTENodeBaseInfo baseInfoField;
         
-        private CellSector[] cellSectorsField;
+        private AircomCell[] cellSectorsField;
         
         private string projectNameField;
         
@@ -225,7 +225,7 @@ namespace NetPlanClient.AirComService {
         }
         
         /// <remarks/>
-        public CellSector[] CellSectors {
+        public AircomCell[] CellSectors {
             get {
                 return this.cellSectorsField;
             }
@@ -456,9 +456,9 @@ namespace NetPlanClient.AirComService {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://AircomPlan.com")]
     public partial class AirComAntennaType {
         
-        private AirComLocationType locationField;
+        private string celliidField;
         
-        private string sectorIdField;
+        private AirComLocationType locationField;
         
         private string antennaTypeNameField;
         
@@ -485,22 +485,22 @@ namespace NetPlanClient.AirComService {
         private double resolutionMetresField;
         
         /// <remarks/>
+        public string Celliid {
+            get {
+                return this.celliidField;
+            }
+            set {
+                this.celliidField = value;
+            }
+        }
+        
+        /// <remarks/>
         public AirComLocationType Location {
             get {
                 return this.locationField;
             }
             set {
                 this.locationField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string SectorId {
-            get {
-                return this.sectorIdField;
-            }
-            set {
-                this.sectorIdField = value;
             }
         }
         
@@ -631,9 +631,11 @@ namespace NetPlanClient.AirComService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://AircomPlan.com")]
-    public partial class CellSector {
+    public partial class AircomCell {
         
         private int cellIDField;
+        
+        private string celliidField;
         
         private AirComAntennaType[] antennersField;
         
@@ -644,6 +646,16 @@ namespace NetPlanClient.AirComService {
             }
             set {
                 this.cellIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Celliid {
+            get {
+                return this.celliidField;
+            }
+            set {
+                this.celliidField = value;
             }
         }
         

@@ -337,14 +337,16 @@ namespace NetPlanClient
                 data.CellSectors = new List<AircomCell>();
                 HashSet< string> celliid = new HashSet<string>();
                 int index = 0;
-                foreach (var sector in CELLAntenners)//需要修改
+                foreach (var sector in CELLAntenners)//需要确认
                 {
                     if (!celliid.Contains(sector.Celliid))
                     {
+                       var anteners= CELLAntenners.Where(fo => fo.Celliid.Equals(sector.Celliid)).ToList();
                         data.CellSectors.Add(new AircomCell()
-                        {
+                        { 
                             //Antenners = sector,
-                            CellID = index + 1
+                            Celliid = sector.Celliid,
+                            Antenners = anteners
                         });
                         index++;
                     }

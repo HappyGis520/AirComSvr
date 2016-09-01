@@ -350,9 +350,7 @@ namespace NetPlanClient
                         });
                         index++;
                     }
-
                 }
-                
                 string FileName = string.Format(@"E:\SendXML{0}.xml", DateTime.Now.ToString("hh-mm-ss"));
                 JLog.Instance.AppInfo(string.Format("生成XML{0}",FileName));
                 JFileExten.ToXML(data, FileName);

@@ -256,7 +256,7 @@ namespace NetPlanClient
         /// <param name="AllAntennas">所有天线的信息</param>
         /// <param name="Savedir">保存目录</param>
         /// <returns></returns>
-        private bool BuilLTEXMLFiles(AirComLTENodeBaseInfo BaseInfo, Dictionary<string, List<AirComAntennaType>> Sectors, List<AirComAntennaType> AllAntennas, string Savedir)
+        private bool BuilLTEXMLFiles(AirComLTENodeBaseInfo BaseInfo,  List<AirComAntennaType> Sectors, List<AirComAntennaType> AllAntennas, string Savedir)
         {
             //LTENodeType _LteNode = new LTENodeType();
 
@@ -502,7 +502,8 @@ namespace NetPlanClient
                     StationType = (AirComService.EnumStationType) (Byte) baseInfo.StationType
 
                 };
-                data.CellSectors = new AirComService.CellSector[CELLAntenners.Count];
+                //data.CellSectors = new AirComService.[CELLAntenners.Count];
+                List<AirComService.AircomCell> cellss = new List<AirComService.AircomCell>();
 
                 HashSet<string> ceiids = new HashSet<string>();
                 int n = 0;
@@ -511,55 +512,19 @@ namespace NetPlanClient
 
                     if (!ceiids.Contains(sector.Celliid))
                     {
-                        AirComService.CellSector sec = new AirComService.CellSector();
+             
                         ceiids.Add(sector.Celliid);
-                        sec.Antenners[Index] = new AirComService.AirComAntennaType()
-                        {
-                            AntennaTypeName = cell.AntennaTypeName,
-                            Azimuth = cell.Azimuth,
-                            Burthen = cell.Burthen,
-                            CarrierAlias = cell.CarrierAlias,
-                            CarrierId = cell.CarrierId,
-                            ElectricalDownTilt = cell.ElectricalDownTilt,
-                            Height = cell.Height,
-                            Location = new AirComService.AirComLocationType()
-                            {
 
-                                Latitude = cell.Location.Latitude,
-                                LongitudeField = cell.Location.LongitudeField,
-                                LongitudeSpecified1 = cell.Location.LongitudeSpecified
-                            },
-                            MechanicalDownTilt = cell.MechanicalDownTilt,
-                            ModelType = cell.ModelType,
-                            SectorId = cell.SectorId
-                        };
+                        var anteners = CELLAntenners.Where(fo => fo.Celliid.Equals(sector.Celliid)).ToList();
+                        AirComService.AircomCell cell = new AirComService.AircomCell();
+                        cell.Celliid = sector.Celliid;
+                        cell.Antenners = anteners.TransAntenner().ToArray();
+                        cellss.Add(cell);
 
-
-                        data.CellSectors.Add(new AircomCell()
-                        {
-                            Celliid = sector.Celliid,
-                            Antenners = CELLAntenners.Where(fo => fo.Celliid.Equals(sector.Celliid)).ToList()
-
-                        });
                         n++;
                     }
-
-
-                   
-                    //sec.CellID = sector.Key;
-                    sec.Antenners = new AirComService.AirComAntennaType[sector.Value.Count];
-                    int Index = 0;
-                    foreach (var cell in sector.Value)
-                    {
-
-                        Index++;
-                    }
-                    
-                    sec.CellID = n+1;
-                    data.CellSectors[n] = sec;
-                    n++;
-
                 }
+                data.CellSectors = cellss.ToArray();
                 string FileName = string.Format(@"E:\SendXML{0}.xml", DateTime.Now.ToString("hh-mm-ss"));
                 JLog.Instance.AppInfo(string.Format("生成XML{0}", FileName));
                 JFileExten.ToXML(data, FileName);

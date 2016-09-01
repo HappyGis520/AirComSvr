@@ -335,15 +335,20 @@ namespace NetPlanClient
                 data.BaseInfo = baseInfo;
 
                 data.CellSectors = new List<AircomCell>();
+                HashSet< string> celliid = new HashSet<string>();
                 int index = 0;
-                foreach (var sector in CELLAntenners)
+                foreach (var sector in CELLAntenners)//需要修改
                 {
-                    data.CellSectors.Add(new AircomCell()
+                    if (!celliid.Contains(sector.Celliid))
                     {
-                        Antenners = sector,
-                        CellID = index+1
-                    });
-                    index++;
+                        data.CellSectors.Add(new AircomCell()
+                        {
+                            //Antenners = sector,
+                            CellID = index + 1
+                        });
+                        index++;
+                    }
+
                 }
                 
                 string FileName = string.Format(@"E:\SendXML{0}.xml", DateTime.Now.ToString("hh-mm-ss"));

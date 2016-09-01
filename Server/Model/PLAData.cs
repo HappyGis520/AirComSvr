@@ -18,7 +18,7 @@ namespace NetPlan.Model
         /// <summary>
         /// 扇区信息
         /// </summary>
-        public List<CellSector> CellSectors = new List<CellSector>();
+        public List<AircomCell> CellSectors = new List<AircomCell>();
 
         /// <summary>
         /// 保存目录

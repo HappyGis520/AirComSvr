@@ -55,7 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CellSector.cs" />
+    <Compile Include="AircomCell.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="EDSDB.cs" />
     <Compile Include="Entity\EntityBase.cs" />

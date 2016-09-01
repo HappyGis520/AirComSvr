@@ -6,9 +6,15 @@ using System.Text;
 namespace NetPlan.Model
 {
     [Serializable]
-     public   class CellSector
+     public   class AircomCell
      {
-         public  int CellID =13777;
+        /// <summary>
+        /// 扇区编号
+        /// </summary>
+        public  int CellID =13777;
+
+        public string Celliid = string.Empty;
+
         public List<AirComAntennaType>  Antenners = new List<AirComAntennaType>();
      }
 }

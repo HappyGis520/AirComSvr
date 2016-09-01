@@ -82,6 +82,7 @@ namespace NetPlanClient
             {
 
                 var obj = ucLTEAntennaType1.BuildAntennaOjbect();
+                obj.Celliid = txtSectorID.Text.Trim();
                 if (obj != null)
                 {
                     _BindingSource.Add(obj);
@@ -99,7 +100,7 @@ namespace NetPlanClient
         {
             try
             {
-                string SectorID = txtSectorID.Text.Trim();
+                   string SectorID = txtSectorID.Text.Trim();
 
 
 
@@ -111,12 +112,11 @@ namespace NetPlanClient
                     {
                         //return;
                     }
-                    for (int index = 0; index < _Antennas.Count; index++)
-                    {
-                        var obj = _Antennas[index];
-                        obj.SectorId = SectorID;
-                    }
-                    RaiseAppendSectorEvent(SectorID, _Antennas);
+                foreach (var antener in _Antennas)
+                {
+                    antener.Celliid = SectorID;
+                }
+                RaiseAppendSectorEvent(_Antennas);
                     Close();
 
             }
@@ -128,14 +128,6 @@ namespace NetPlanClient
 
             
         }
-
-        private void buttonX1_Click(object sender, EventArgs e)
-        {
-            //JLIB.CSharp.JFileExten.ToXML(GlobalInfo.Instance.ConfigParam, "D:\\AppConfig.xml");
-
-        }
-
-
 
         private void dataGridViewX1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -195,18 +187,18 @@ namespace NetPlanClient
 
         #region AppendSectorEvent
 
-        protected  Action<string, IList<AirComAntennaType>> AppendSectorEvent;
+        protected  Action<IList<AirComAntennaType>> AppendSectorEvent;
 
-        protected void RaiseAppendSectorEvent(string SectorID, IList<AirComAntennaType> AntennaTypes)
+        protected void RaiseAppendSectorEvent(IList<AirComAntennaType> AntennaTypes)
         {
             if (AppendSectorEvent != null)
             {
-                AppendSectorEvent.BeginInvoke( SectorID, AntennaTypes,null, null);
+                AppendSectorEvent.BeginInvoke( AntennaTypes,null, null);
             }
 
         }
 
-        public void RegistAppendSectorEvent(Action<string, IList<AirComAntennaType>> handle)
+        public void RegistAppendSectorEvent(Action< IList<AirComAntennaType>> handle)
         {
             //DeRegistAppendSectorEvent(handle);
             AppendSectorEvent = handle;
@@ -214,7 +206,7 @@ namespace NetPlanClient
 
         }
 
-        public void DeRegistAppendSectorEvent(Action<string, IList<AirComAntennaType>> handle)
+        public void DeRegistAppendSectorEvent(Action< IList<AirComAntennaType>> handle)
         {
             AppendSectorEvent = null;
 

@@ -19,7 +19,7 @@ using NetPlanClient.AirComService;
 using ZipOneCode.ZipProvider;
 using AirComAntennaType = NetPlan.Model.AirComAntennaType;
 using AirComLTENodeBaseInfo = NetPlan.Model.AirComLTENodeBaseInfo;
-using CellSector = NetPlan.Model.CellSector;
+using AircomCell = NetPlan.Model.AircomCell;
 using PLAData = NetPlan.Model.PLAData;
 
 
@@ -31,9 +31,9 @@ namespace NetPlanClient
 
         //AirComService AirComServer =null;
         /// <summary>
-        /// 天线列表
+        /// 扇区天线列表
         /// </summary>
-        private Dictionary<string, List<AirComAntennaType>> Sectors = new Dictionary<string, List<AirComAntennaType>>();
+       List<AirComAntennaType> CELLAntenners = new  List<AirComAntennaType>();
         /// <summary>
         /// 天线列表
         /// </summary>
@@ -78,7 +78,7 @@ namespace NetPlanClient
             {
                 var baseInfo = ucLTEStationType1.BuildBasicInfo();
                 string dir = string .Empty;
-                 BuilLTEXMLFiles(baseInfo,Sectors,_AllAntennas,dir );
+                 BuilLTEXMLFiles(baseInfo,CELLAntenners,_AllAntennas,dir );
             }
             catch (Exception ex)
             {
@@ -98,12 +98,15 @@ namespace NetPlanClient
                 if (e.RowIndex >= 0 && _bindingSource.Count > e.RowIndex)
                 {
                     AirComAntennaType obj = _bindingSource[e.RowIndex] as AirComAntennaType;
-                    //string SectorID = obj.SectorId;
-                    List<AirComAntennaType> SelectAntenna = null;
-                    if (Sectors.TryGetValue(obj.SectorId, out SelectAntenna))
+                    var editers = _AllAntennas.Where(fo => fo.Celliid == obj.Celliid).ToList();
+                    if (editers != null && editers.Count > 0)
                     {
-                        EditSectors(obj.SectorId, SelectAntenna);
+                        EditSectors(obj.Celliid,editers);
                     }
+                    //if (Sectors.TryGetValue(obj.SectorId, out SelectAntenna))
+                    //{
+                    //    EditSectors(obj.SectorId, SelectAntenna);
+                    //}
 
                 }
             }
@@ -186,18 +189,18 @@ namespace NetPlanClient
             _frmSector.ShowDialog();
 
         }
-        private void SubDoAppenSectorEvent(string SectorID, IList<AirComAntennaType> AntennaTypes)
+        private void SubDoAppenSectorEvent(IList<AirComAntennaType> AntennaTypes)
         {
             if (this.InvokeRequired)
             {
-                object[] Params = new object[] { SectorID, AntennaTypes };
-                this.Invoke(new Action<string, IList<AirComAntennaType>>(this.SubDoAppenSectorEvent), Params);
+                object[] Params = new object[] {  AntennaTypes };
+                this.Invoke(new Action< IList<AirComAntennaType>>(this.SubDoAppenSectorEvent), Params);
                 return;
 
             }
             try
             {
-                AppendSectorInfo(SectorID, AntennaTypes);
+                AppendSectorInfo(AntennaTypes);
             }
             catch (Exception ex)
             {
@@ -210,27 +213,17 @@ namespace NetPlanClient
         /// </summary>
         /// <param name="SectorID"></param>
         /// <param name="AntennaTypes"></param>
-        private void AppendSectorInfo(string SectorID, IList<AirComAntennaType> AntennaTypes)
+        private void AppendSectorInfo( IList<AirComAntennaType> AntennaTypes)
         {
             try
             {
-                if (Sectors.ContainsKey(SectorID))
-                {
-                    Sectors.Remove(SectorID);
-                    var obj = _AllAntennas.FindAll(fo => fo.SectorId == SectorID);
-                    if (obj.Count > 0)
-                    {
-                        obj.ForEach(Fo =>
-                        {
-                            _bindingSource.Remove(Fo);
-                        });
-                    }
-                }
+                var _olds = _AllAntennas.Where(fo => fo.Celliid == AntennaTypes[0].Celliid).ToList();
+                _olds.ForEach(fo=>_bindingSource.Remove(fo));
                 foreach (var obj in AntennaTypes)
                 {
                     _bindingSource.Add(obj);
                 }
-                Sectors.Add(SectorID, AntennaTypes.ToList());
+                CELLAntenners.AddRange( AntennaTypes.ToList());
             }
             catch (Exception ex)
             {
@@ -341,13 +334,13 @@ namespace NetPlanClient
                 baseInfo.CityName = txtCityName.Text;
                 data.BaseInfo = baseInfo;
 
-                data.CellSectors = new List<CellSector>();
+                data.CellSectors = new List<AircomCell>();
                 int index = 0;
-                foreach (var sector in Sectors)
+                foreach (var sector in CELLAntenners)
                 {
-                    data.CellSectors.Add(new CellSector()
+                    data.CellSectors.Add(new AircomCell()
                     {
-                        Antenners = sector.Value,
+                        Antenners = sector,
                         CellID = index+1
                     });
                     index++;
@@ -388,17 +381,25 @@ namespace NetPlanClient
                 var baseInfo = ucLTEStationType1.BuildBasicInfo();
                 data.BaseInfo = baseInfo;
                 //data.CellSectors = new CellSector[Sectors.Count];     
-               data.CellSectors = new List<CellSector>(); 
+               data.CellSectors = new List<AircomCell>(); 
                 data.CoverRadius = 12;
                 int index = 0;
-                foreach (var sector in Sectors)
+                HashSet<string> celliids = new HashSet<string>();
+                foreach (var sector in CELLAntenners)
                 {
-                    data.CellSectors[0] = new CellSector()
+                    if (!celliids.Contains(sector.Celliid))
                     {
-                        Antenners = sector.Value,
-                        CellID = index+1
-                    };
-                    index++;
+                        celliids.Add(sector.Celliid);
+                        data.CellSectors.Add(new AircomCell()
+                        {
+                            Celliid = sector.Celliid,
+                            Antenners = CELLAntenners.Where(fo=>fo.Celliid.Equals(sector.Celliid)).ToList()
+                            
+                        });
+                        index++;
+                    }
+                    
+
                 }
                 var Dir = AppDomain.CurrentDomain.BaseDirectory+Path.DirectorySeparatorChar+"XML\\";
                 string FileName = string.Format(@"E:\SendXML{0}.xml", DateTime.Now.ToString("hh-mm-ss"));
@@ -501,16 +502,17 @@ namespace NetPlanClient
                     StationType = (AirComService.EnumStationType) (Byte) baseInfo.StationType
 
                 };
-                data.CellSectors = new AirComService.CellSector[Sectors.Count];
+                data.CellSectors = new AirComService.CellSector[CELLAntenners.Count];
+
+                HashSet<string> ceiids = new HashSet<string>();
                 int n = 0;
-                foreach (var sector in Sectors)
+                foreach (var sector in CELLAntenners)
                 {
-                    AirComService.CellSector sec = new AirComService.CellSector();
-                    //sec.CellID = sector.Key;
-                    sec.Antenners = new AirComService.AirComAntennaType[sector.Value.Count];
-                    int Index = 0;
-                    foreach (var cell in sector.Value)
+
+                    if (!ceiids.Contains(sector.Celliid))
                     {
+                        AirComService.CellSector sec = new AirComService.CellSector();
+                        ceiids.Add(sector.Celliid);
                         sec.Antenners[Index] = new AirComService.AirComAntennaType()
                         {
                             AntennaTypeName = cell.AntennaTypeName,
@@ -531,6 +533,25 @@ namespace NetPlanClient
                             ModelType = cell.ModelType,
                             SectorId = cell.SectorId
                         };
+
+
+                        data.CellSectors.Add(new AircomCell()
+                        {
+                            Celliid = sector.Celliid,
+                            Antenners = CELLAntenners.Where(fo => fo.Celliid.Equals(sector.Celliid)).ToList()
+
+                        });
+                        n++;
+                    }
+
+
+                   
+                    //sec.CellID = sector.Key;
+                    sec.Antenners = new AirComService.AirComAntennaType[sector.Value.Count];
+                    int Index = 0;
+                    foreach (var cell in sector.Value)
+                    {
+
                         Index++;
                     }
                     

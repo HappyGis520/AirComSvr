@@ -15,16 +15,11 @@ namespace NetPlan.Model
     /// </summary>
     public class AirComAntennaType
     {
-        protected string _SectorID = "wjj";
         /// <summary>
-        /// 扇区编号
+        /// 所属扇区的iid  --20160831识别所属扇区
+        /// 
         /// </summary>
-        public string SectorId
-        {
-            get { return _SectorID; }
-            set { _SectorID = value; }
-        }
-
+        public string Celliid = string.Empty;
         /// <summary>
         /// 天线型号
         /// </summary>

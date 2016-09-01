@@ -424,7 +424,7 @@ namespace NetPlan.BLL
         /// <param name="AllAntennas">所有天线的信息</param>
         /// <param name="Savedir">保存目录</param>
         /// <returns></returns>
-        public static bool BuilLTEXMLFilesInterface(AirComLTENodeBaseInfo BaseInfo, List<CellSector> Sectors,  string Savedir,out XmlFilePackageInfo XmlFiles)
+        public static bool BuilLTEXMLFilesInterface(AirComLTENodeBaseInfo BaseInfo, List<AircomCell> Sectors,  string Savedir,out XmlFilePackageInfo XmlFiles)
         {
             try
             {
@@ -434,6 +434,7 @@ namespace NetPlan.BLL
 
                 List<AirComAntennaType> AllAntennas = new List<AirComAntennaType>();
                 List<AirComAntennaType> SubAntennas = new List<AirComAntennaType>();
+                BuildCelliid(BaseInfo, Sectors);
                 foreach (var Sector in Sectors)
                 {
                     //Sectors.TryGetValue(key, out SubAntennas);
@@ -512,10 +513,30 @@ namespace NetPlan.BLL
             //    return false;
             //}
 
-        } 
+        }
         #endregion
 
         #region 数据注入方法
+        /// <summary>
+        /// 自动生成扇区的id,和iid ,根据20160831郭琴的邮件，
+        /// 扇区的id为基站中所有扇区根据索引号来编号，起始编号为1
+        /// 扇区iid的编号为基站iid-扇区id
+        /// </summary>
+        private static void BuildCelliid(AirComLTENodeBaseInfo BaseInfo, List<AircomCell> Sectors)
+        {
+            int cellid = 1;
+            
+            foreach (var cell in Sectors)
+            {
+                cell.CellID = cellid;
+                cell.Celliid = string.Format("{0}-{1}", BaseInfo.StationId, cellid);
+                foreach (var antenner in cell.Antenners)
+                {
+                    antenner.Celliid = cell.Celliid;
+                }
+            }
+            
+        }
 
         /// <summary>
         /// 注入基础信息至RefLteNode
@@ -574,11 +595,13 @@ namespace NetPlan.BLL
         /// </summary>
         /// <param name="Sectors">用户输入的扇区信息，包括扇区编号，以及扇区天线信息</param>
         /// <param name="RefLteNode">新生成的，EDS中的基站信息</param>
-        private static void BuildCarrierInfo(List<CellSector> Sectors, ref LTENodeType RefLteNode)
+        private static void BuildCarrierInfo(List<AircomCell> Sectors, ref LTENodeType RefLteNode)
         {
             List<LTENodeCarrierType> _LteNodeCarriers = new List<LTENodeCarrierType>();
+            int cellid = 1;
             foreach (var Sector in Sectors)
             {
+                Sector.CellID = cellid;//20160831郭琴 SAM商量确定，有邮件
                 List<AirComAntennaType> myAntenna = new List<AirComAntennaType>();
                 myAntenna = Sector.Antenners as List<AirComAntennaType>;
                 if (myAntenna!=null && myAntenna.Count>0)
@@ -607,6 +630,7 @@ namespace NetPlan.BLL
 
                 }
                 RefLteNode.Carriers = _LteNodeCarriers.ToArray();
+                cellid++;
 
             }
         }
@@ -641,7 +665,7 @@ namespace NetPlan.BLL
 
                 };
                 #endregion
-
+                
                 _Antenna.Azimuth = Item.Azimuth;
                 _Antenna.AzimuthSpecified = true;
                 _Antenna.ElectricalDownTilt_RO = Item.ElectricalDownTilt;//界面输入的是物理的？还是电子的？//无用，填0 @20150825确认
@@ -693,7 +717,8 @@ namespace NetPlan.BLL
                     iid = "Unknown"
                 };
                 //_fe.LTECellID = (index + 1).ToString();//基站iid-天线索引号（_Antenna.Index）
-                _fe.LTECellID =string.Format("{0}-{1}" ,RefLteNode.iid ,index+1);//扇区ＩＤ,20151126郭琴确认//20160829根据郭琴要求，修改两种对应关系，详见
+                //_fe.LTECellID =string.Format("{0}-{1}" ,RefLteNode.iid ,index+1);//扇区ＩＤ,20151126郭琴确认//20160829根据郭琴要求，修改两种对应关系，详见
+                _fe.LTECellID = Item.Celliid;
                 _fe.Length = 0;
                 _fe.LengthSpecified = true;
                 _fe.DLGain = 0;
@@ -726,14 +751,16 @@ namespace NetPlan.BLL
         /// </summary>
         /// <param name="Sectors">扇区信息，扇区编号和天线构成</param>
         /// <param name="RefLteNode">新生成的，EDS中的基站信息</param>
-        private static void BuildCellInfo(List<CellSector> Sectors, ref LTENodeType RefLteNode)
+        private static void BuildCellInfo( List<AircomCell> Sectors, ref LTENodeType RefLteNode)
         {
             List<LTECellType> _LteCells = new List<LTECellType>();
+
             foreach (var Sector in Sectors)
             {
                 #region Cells
 
-                var key = (int)Sector.CellID ;
+                //var key = (int)Sector.CellID ;
+               
                 List<AirComAntennaType> Antennas = Sector.Antenners as List<AirComAntennaType>;
                 if (Antennas!=null && Antennas.Count>0)
                 {
@@ -743,7 +770,7 @@ namespace NetPlan.BLL
 
                         LTECellType _LteCell = new LTECellType();
                         //_LteCell.bvid = RefLteNode.bvid;
-                        _LteCell.iid =string.Format("{0}-{1}", RefLteNode.iid, key.ToString()); //添加扇区界面中，用户输入的扇区名称
+                        _LteCell.iid =string.Format("{0}-{1}", RefLteNode.iid, Sector.CellID); //添加扇区界面中，用户输入的扇区名称
                         _LteCell.Parent = new IDType()
                         {
                             iid = RefLteNode.iid //LteNode的ＩＩＤ一致　
@@ -751,7 +778,7 @@ namespace NetPlan.BLL
                         _LteCell.Tac = 0; //路由编码，采用默认值0
                         _LteCell.TacSpecified = true;
                         _LteCell.LTECellIDSpecified = true;
-                        _LteCell.LTECellID =key ;//2015-11-27郭琴确认是扇区ＩＤ //LteCell集合项的索引，采用索引，不重要
+                        _LteCell.LTECellID = Sector.CellID;
                         double max = 31 + ((obj.Power - 0.21) / 3 + (obj.Power - 0.21) % 3 > 0 ? 1 : 0) * 3;
                         _LteCell.Carrier = new LTECellCarrierType()
                         {

@@ -69,13 +69,11 @@ namespace NetPlanClient
         #endregion
 
         #region 窗体事件
-
-
-        private void FrmSector_Load(object sender, EventArgs e)
-        {
-
-        }
-
+        /// <summary>
+        /// 添加天线按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnAppend_Click(object sender, EventArgs e)
         {
             try
@@ -95,29 +93,26 @@ namespace NetPlanClient
             }
 
         }
-
+        /// <summary>
+        /// 添加扇区
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnOk_Click(object sender, EventArgs e)
         {
             try
             {
                    string SectorID = txtSectorID.Text.Trim();
-
-
-
                     if (string.IsNullOrEmpty(SectorID))
                     {
                         return;
                     }
-                    if (_BindingSource.Count < 1)
+                    foreach (var antener in _Antennas)
                     {
-                        //return;
+                        antener.Celliid = SectorID;
                     }
-                foreach (var antener in _Antennas)
-                {
-                    antener.Celliid = SectorID;
-                }
-                RaiseAppendSectorEvent(_Antennas);
-                    Close();
+                    RaiseAppendSectorEvent(_Antennas);
+                        Close();
 
             }
             catch (Exception ex)

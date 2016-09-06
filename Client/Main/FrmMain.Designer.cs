@@ -118,7 +118,7 @@
             this.tabCreateTask.Name = "tabCreateTask";
             this.tabCreateTask.Tag = "CreateTask";
             this.tabCreateTask.Text = "创建任务";
-            this.tabCreateTask.Click += new System.EventHandler(this.tabCreateTask_Click);
+            //this.tabCreateTask.Click += new System.EventHandler(this.tabCreateTask_Click);
             // 
             // tabTaskInfo
             // 
@@ -169,7 +169,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(939, 501);
             this.tableLayoutPanel1.TabIndex = 1;
-            this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
+            //this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
             // 
             // dgvStation
             // 
@@ -529,7 +529,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "FrmMain";
             this.Text = "主界面";
-            this.Load += new System.EventHandler(this.FrmMain_Load);
+            //this.Load += new System.EventHandler(this.FrmMain_Load);
             ((System.ComponentModel.ISupportInitialize)(this.superTabStrip1)).EndInit();
             this.pnlContainer.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);

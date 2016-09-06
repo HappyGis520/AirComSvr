@@ -326,7 +326,7 @@ namespace NetPlanClient
             this.Name = "FrmSector";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "扇区信息";
-            this.Load += new System.EventHandler(this.FrmSector_Load);
+            //this.Load += new System.EventHandler(this.FrmSector_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewX1)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);

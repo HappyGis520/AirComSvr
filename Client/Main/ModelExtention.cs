@@ -8,7 +8,11 @@ namespace NetPlanClient
 {
     public static class ModelExtention
     {
-
+        /// <summary>
+        /// 转为服务引用的模型
+        /// </summary>
+        /// <param name="myModel"></param>
+        /// <returns></returns>
         public static List<AirComService.AirComAntennaType> TransAntenner(this List<AirComAntennaType> myModel)
         {
 

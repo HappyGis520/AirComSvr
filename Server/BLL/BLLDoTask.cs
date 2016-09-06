@@ -551,35 +551,6 @@ namespace NetPlan.BLL
 
 
         }
-        ///// <summary>
-        ///// 启动仿真
-        ///// </summary>
-        ///// <returns></returns>
-        // private bool StartEAWS(string ProjectName,string SchemaName)
-        //{
-        //    try
-        //    {
-        //        string TaskName = GetTaskName(ProjectName);
-        //        if (!string.IsNullOrEmpty(TaskName))
-        //        {
-        //            return BLLEAWS.Instance.StartTaskREQ(SchemaName, TaskName);
-        //        }
-        //        else
-        //        {
-        //            JLog.Instance.AppInfo("配置文件中没有找到相应的工程信息，中断");
-        //            return false;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        JLog.Instance.Error(ex.Message, MethodBase.GetCurrentMethod().Name,
-        //            MethodBase.GetCurrentMethod().Module.Name);
-        //        return false;
-
-        //    }
-
-
-        //}
 
         private string GetTaskName(string ProjectName)
         {

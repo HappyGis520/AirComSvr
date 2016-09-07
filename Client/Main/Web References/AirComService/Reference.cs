@@ -265,7 +265,7 @@ namespace NetPlanClient.AirComService {
         
         private string cityNameField;
         
-        private string stationIdField;
+        private string stationiidField;
         
         private string stationAliasField;
         
@@ -290,12 +290,12 @@ namespace NetPlanClient.AirComService {
         }
         
         /// <remarks/>
-        public string StationId {
+        public string Stationiid {
             get {
-                return this.stationIdField;
+                return this.stationiidField;
             }
             set {
-                this.stationIdField = value;
+                this.stationiidField = value;
             }
         }
         

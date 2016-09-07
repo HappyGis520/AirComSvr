@@ -143,7 +143,7 @@ namespace NetPlan.Model
         }
 
         /// <summary>
-        /// 覆盖半径
+        /// 覆盖半径覆盖半径1，2，3，5，由用户下拉框中选择，默认为2;
         /// </summary>
         public double RadiusKm
         {

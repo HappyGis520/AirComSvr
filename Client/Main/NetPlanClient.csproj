@@ -149,7 +149,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="DOC\AppConfig.xml" />
-    <Content Include="DOC\test.xml" />
     <Content Include="DOC\浪潮传入数据-以XML形式附说明.xml" />
     <Content Include="DOC\登录远程.txt" />
     <None Include="Web References\AirComService\AirComService.disco" />

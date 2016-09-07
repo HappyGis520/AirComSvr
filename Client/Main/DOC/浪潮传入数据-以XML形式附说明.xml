@@ -28,13 +28,13 @@
           <Height>11</Height><!--挂高,浮点数-->
           <MechanicalDownTilt>11</MechanicalDownTilt><!--机械下倾角,浮点数-->
           <ElectricalDownTilt>0</ElectricalDownTilt><!--电子下倾角,浮点数-->
-          <Power>0</Power><!--功率，浮点数-->
-          <Burthen>11</Burthen><!--负荷,浮点数-->
+          <Power>0</Power><!--功率,单位dbm，浮点数-->
+          <Burthen>11</Burthen><!--负荷,百分值,浮点数-->
           <ModelType>F01</ModelType><!--传播模型-->
           <CarrierAlias>Carrier1</CarrierAlias><!--载波别名-->
           <CarrierId>1</CarrierId><!--载波编号，整型-->
-          <RadiusKm>0</RadiusKm><!--覆盖半径,浮点数-->
-          <ResolutionMetres>0</ResolutionMetres><!--计算精度,浮点数-->
+          <RadiusKm>0</RadiusKm><!--覆盖半径，单位KM,浮点数-->
+          <ResolutionMetres>0</ResolutionMetres><!--计算精度,浮点数,单位米-->
         </AirComAntennaType>
         <AirComAntennaType>
           <Celliid>c11</Celliid>

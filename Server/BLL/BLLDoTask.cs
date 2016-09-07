@@ -328,7 +328,10 @@ namespace NetPlan.BLL
                                                                         else
                                                                         {
                                                                             JLog.Instance.AppInfo("执行删除xml操作成功");
-
+                                                                            if (!ExecuteCommand( AutoEDSDeleteCommand( xmlFilePage.DeleteLocationFileFullName, _CurProcData.ProjectName), 60000))
+                                                                            {
+                                                                                JLog.Instance.AppInfo("执行删除xml操作失败");
+                                                                            }
                                                                         }
 #endregion
                                                                     }

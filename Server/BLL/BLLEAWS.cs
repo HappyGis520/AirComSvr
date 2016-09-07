@@ -21,8 +21,6 @@ namespace NetPlan.BLL
          private EAWSCallBackSolid _CallBackHandle = null;
          InstanceContext _callbackContext = null;
         private EAWSClient m_EAWSClient;
-        private System.Object lockThis = new System.Object();
-        private int counter = 0;
 
         public BLLEAWS()
         {

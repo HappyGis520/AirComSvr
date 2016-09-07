@@ -430,7 +430,7 @@ namespace NetPlan.BLL
             {
                 LTENodeType _LteNode = new LTENodeType();
 
-                //var keys = Sectors.Keys.ToList();
+         
 
                 List<AirComAntennaType> AllAntennas = new List<AirComAntennaType>();
                 List<AirComAntennaType> SubAntennas = new List<AirComAntennaType>();
@@ -530,10 +530,13 @@ namespace NetPlan.BLL
             {
                 cell.CellID = cellid;
                 cell.Celliid = string.Format("{0}-{1}", BaseInfo.Stationiid, cellid);
+
                 foreach (var antenner in cell.Antenners)
                 {
                     antenner.Celliid = cell.Celliid;
+                    
                 }
+                cellid++;
             }
             
         }
@@ -564,29 +567,6 @@ namespace NetPlan.BLL
             RefLteNode.Name2 = BaseInfo.PlanPrjID.ToString();//填基站的规划期数；规划期数由用户在界面上输入。
             //RefLteNode.NodeID = 0;//毕工确认  @20150808 //wjj20150930 可忽略的值不用输入，序列化时会忽略
             
-            #endregion
-        }
-        private static void BuildStationInfo(EtBaseStation BaseInfo, ref LTENodeType RefLteNode)
-        {
-            #region 基本信息
-
-            RefLteNode.iid = BaseInfo.StationGUID;
-            RefLteNode.Location = new IDType()
-            {
-                iid = BaseInfo.StationGUID//唯一识别，同_LteNode.iid一致  //基站ID
-            };
-            RefLteNode.Comments = BaseInfo.TaskObj.UserObj.EDSObj.CityName; // GlobalInfo.Instance.ConfigParam.ProjectNames[0].CityName; //地市--可有可无---毕工确认  @20150808  ---（wjj:根据登录用户获取地市及工程名称）
-            RefLteNode.PLMN = new IDType()
-            {
-                //iid = GlobalInfo.Instance.ConfigParam.ProjectNames[0].ProjectName//工程同名---这个是必须的同---毕工确认  @20150808//
-                iid = "plan"//固定值plan---郭琴确认  @20151127//
-
-                //工程名是定死的，用户可选择地市信息，系统根据地市信息获取工程名（可配置）
-            };
-            RefLteNode.Name2 = BaseInfo.PlanLevel.ToString();//填基站的规划期数；规划期数由用户在界面上输入。
-            //RefLteNode.Name2 = BaseInfo.PlanPrjID.ToString();//填基站的规划期数；规划期数由用户在界面上输入。
-                                                             //RefLteNode.NodeID = 0;//毕工确认  @20150808 //wjj20150930 可忽略的值不用输入，序列化时会忽略
-
             #endregion
         }
 
@@ -633,11 +613,6 @@ namespace NetPlan.BLL
                 cellid++;
 
             }
-        }
-
-        private static void BuildCarrierInfo(Dictionary<int, List<EtAntennalnfo>> Sectors, ref LTENodeType RefLteNode)
-        {
-
         }
 
         /// <summary>
@@ -758,31 +733,30 @@ namespace NetPlan.BLL
             foreach (var Sector in Sectors)
             {
                 #region Cells
-
-                //var key = (int)Sector.CellID ;
-               
+                LTECellType _LteCell = new LTECellType();
                 List<AirComAntennaType> Antennas = Sector.Antenners as List<AirComAntennaType>;
-                if (Antennas!=null && Antennas.Count>0)
-                {
 
+                #region 生成扇区信息
+                _LteCell.iid = string.Format("{0}-{1}", RefLteNode.iid, Sector.CellID); //添加扇区界面中，用户输入的扇区名称
+                _LteCell.Parent = new IDType()
+                {
+                    iid = RefLteNode.iid //LteNode的ＩＩＤ一致　
+                };
+                _LteCell.Tac = 0; //路由编码，采用默认值0
+                _LteCell.TacSpecified = true;
+                _LteCell.LTECellIDSpecified = true;
+                _LteCell.LTECellID = Sector.CellID;
+                #endregion
+
+                #region 生成馈线信息
+                if (Antennas != null && Antennas.Count > 0)
+                {
                     foreach (var obj in Antennas)
                     {
-
-                        LTECellType _LteCell = new LTECellType();
-                        //_LteCell.bvid = RefLteNode.bvid;
-                        _LteCell.iid =string.Format("{0}-{1}", RefLteNode.iid, Sector.CellID); //添加扇区界面中，用户输入的扇区名称
-                        _LteCell.Parent = new IDType()
-                        {
-                            iid = RefLteNode.iid //LteNode的ＩＩＤ一致　
-                        };
-                        _LteCell.Tac = 0; //路由编码，采用默认值0
-                        _LteCell.TacSpecified = true;
-                        _LteCell.LTECellIDSpecified = true;
-                        _LteCell.LTECellID = Sector.CellID;
                         double max = 31 + ((obj.Power - 0.21) / 3 + (obj.Power - 0.21) % 3 > 0 ? 1 : 0) * 3;
                         _LteCell.Carrier = new LTECellCarrierType()
                         {
-                            CarrierID =obj.CarrierId.ToString(),
+                            CarrierID = obj.CarrierId.ToString(),
                             MaxTxPower = max, //最大功能，由用户从界面输入的RS功率换算；换算方法：稍后发邮;
                             MaxTaSpecified = true,
                             NoiseFigure = 6, //采用默认值6
@@ -791,12 +765,12 @@ namespace NetPlan.BLL
                             PhysicalCellIDSpecified = true
 
                         };
-
-
-                        _LteCells.Add((_LteCell));
                     }
-                }
 
+                } 
+                #endregion
+
+                _LteCells.Add((_LteCell));
                 #endregion
             }
 

@@ -243,14 +243,12 @@ namespace NetPlanClient
             var baseInfo = ucLTEStationType1.BuildBasicInfo();
             baseInfo.Lng = 119.97;
             baseInfo.Lat = 31.81;
-            var r = 1;
             GeoRegion reg = new GeoRegion();
             //PLAData.GetExtend(baseInfo.Lng,baseInfo.Lat, out reg.EastMin,out reg.Eastmax,out reg.NorthMin,out reg.NorthMax, r*1000,50);
         }
 
         private void btnLoadXML_Click(object sender, EventArgs e)
         {
-            Stream myStream = null;
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
             openFileDialog1.InitialDirectory = "E:\\";
@@ -302,7 +300,7 @@ namespace NetPlanClient
                     Lng = baseInfo.Lng,
                     SaveType = (AirComService.EnumSaveType)(byte)baseInfo.SaveType,
                     StationAlias = baseInfo.StationAlias,
-                    StationId = baseInfo.Stationiid,
+                    Stationiid = baseInfo.Stationiid,
                     StationType = (AirComService.EnumStationType)(Byte)baseInfo.StationType
 
                 }; 

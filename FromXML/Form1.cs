@@ -45,7 +45,6 @@ namespace FromXML
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Stream myStream = null;
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
             openFileDialog1.InitialDirectory = "E:\\";

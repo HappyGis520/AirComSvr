@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="gbk"?>
+<PLAData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <WorkOrder xmlns="http://AircomPlan.com">1000</WorkOrder><!--工单号,长整型-->
+  <BaseInfo xmlns="http://AircomPlan.com"><!--AirComLTE基站基本信息-->
+    <CityName>changzhou</CityName><!--仿真数据所属城市的全拼拼音，，字符型-->
+    <Stationiid>123</Stationiid><!--基站统一编号，字符型，同一工程必须唯一-->
+    <StationAlias>wjj123</StationAlias><!--基站别名，字符型-->
+    <Lng>119.97</Lng><!--经度，浮点数 -->
+    <Lat>31.81</Lat><!--纬度，浮点数-->
+    <StationType>Planning</StationType><!--基站类别，字符型， 规划站:Planning,现有站:Extant,其它:Other-->
+    <SaveType>Delete</SaveType><!--仿真后是否删除，字符型， 保留:Save,删除:Delete-->
+    <CoverType>Indoor</CoverType><!--基站数据覆盖类别，字符型， 室外:Outdoor, 室内:Indoor-->
+    <PlanPrjID>1</PlanPrjID><!--规划期数,整型-->
+  </BaseInfo>
+  <CellSectors xmlns="http://AircomPlan.com">
+    <AircomCell>
+      <CellID>1</CellID><!--扇区编号，整型，必须大于零-->
+      <Celliid>c11</Celliid><!--扇区编码：同一工程下必须唯一，字符型-->
+      <Antenners>
+        <AirComAntennaType>
+          <Celliid>c11</Celliid><!--所属扇区编码：同一基站下必须唯一，字符型-->
+          <Location LongitudeSpecified="false">
+            <LongitudeField>120.234</LongitudeField>
+            <Latitude>30.256</Latitude>
+          </Location>
+          <AntennaTypeName>Default_F\Default_F</AntennaTypeName><!--天线型号-->
+          <Azimuth>11</Azimuth><!--方向角,整型 -->
+          <Height>11</Height><!--挂高,浮点数-->
+          <MechanicalDownTilt>11</MechanicalDownTilt><!--机械下倾角,浮点数-->
+          <ElectricalDownTilt>0</ElectricalDownTilt><!--电子下倾角,浮点数-->
+          <Power>0</Power><!--功率，浮点数-->
+          <Burthen>11</Burthen><!--负荷,浮点数-->
+          <ModelType>F01</ModelType><!--传播模型-->
+          <CarrierAlias>Carrier1</CarrierAlias><!--载波别名-->
+          <CarrierId>1</CarrierId><!--载波编号，整型-->
+          <RadiusKm>0</RadiusKm><!--覆盖半径,浮点数-->
+          <ResolutionMetres>0</ResolutionMetres><!--计算精度,浮点数-->
+        </AirComAntennaType>
+        <AirComAntennaType>
+          <Celliid>c11</Celliid>
+          <Location LongitudeSpecified="false">
+            <LongitudeField>120.234</LongitudeField>
+            <Latitude>30.256</Latitude>
+          </Location>
+          <AntennaTypeName>Default_F\Default_F</AntennaTypeName>
+          <Azimuth>111</Azimuth>
+          <Height>111</Height>
+          <MechanicalDownTilt>111</MechanicalDownTilt>
+          <ElectricalDownTilt>0</ElectricalDownTilt>
+          <Power>0</Power>
+          <Burthen>111</Burthen>
+          <ModelType>F01</ModelType>
+          <CarrierAlias>Carrier1</CarrierAlias>
+          <CarrierId>1</CarrierId>
+          <RadiusKm>0</RadiusKm>
+          <ResolutionMetres>0</ResolutionMetres>
+        </AirComAntennaType>
+      </Antenners>
+    </AircomCell>
+    <AircomCell>
+      <CellID>1</CellID>
+      <Celliid>c22</Celliid>
+      <Antenners>
+        <AirComAntennaType>
+          <Celliid>c22</Celliid>
+          <Location LongitudeSpecified="false">
+            <LongitudeField>120.234</LongitudeField>
+            <Latitude>30.256</Latitude>
+          </Location>
+          <AntennaTypeName>Default_D\Default_D</AntennaTypeName>
+          <Azimuth>22</Azimuth>
+          <Height>22</Height>
+          <MechanicalDownTilt>22</MechanicalDownTilt>
+          <ElectricalDownTilt>0</ElectricalDownTilt>
+          <Power>0</Power>
+          <Burthen>22</Burthen>
+          <ModelType>Myriad</ModelType>
+          <CarrierAlias>Carrier2</CarrierAlias>
+          <CarrierId>2</CarrierId>
+          <RadiusKm>0</RadiusKm>
+          <ResolutionMetres>0</ResolutionMetres>
+        </AirComAntennaType>
+      </Antenners>
+    </AircomCell>
+  </CellSectors>
+  <ProjectName xmlns="http://AircomPlan.com">auto_changzhou</ProjectName><!--工程名-->
+  <CoverRadius xmlns="http://AircomPlan.com">1</CoverRadius><!--覆盖半径-->
+</PLAData>

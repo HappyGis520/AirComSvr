@@ -196,7 +196,7 @@ namespace NetPlan.BLL
                 location.LatitudeSpecified = true;
                 location.Longitude = BaseInfo.Lng;
                 location.LongitudeSpecified = true;
-                location.iid = BaseInfo.StationId;
+                location.iid = BaseInfo.Stationiid;
 
                 location.AllowedOperations = ReadOnlyType.ReadWrite;
 
@@ -285,7 +285,7 @@ namespace NetPlan.BLL
                 }
                 location.bvid = Prjobj.ProjectName;
 
-                location.iid = BaseInfo.StationId;
+                location.iid = BaseInfo.Stationiid;
                 List<RootEntityType> Locations = new List<RootEntityType>();
                 Locations.Add(location);
                 #region 序列化示例
@@ -529,7 +529,7 @@ namespace NetPlan.BLL
             foreach (var cell in Sectors)
             {
                 cell.CellID = cellid;
-                cell.Celliid = string.Format("{0}-{1}", BaseInfo.StationId, cellid);
+                cell.Celliid = string.Format("{0}-{1}", BaseInfo.Stationiid, cellid);
                 foreach (var antenner in cell.Antenners)
                 {
                     antenner.Celliid = cell.Celliid;
@@ -547,10 +547,10 @@ namespace NetPlan.BLL
         {
             #region 基本信息
 
-            RefLteNode.iid = BaseInfo.StationId;
+            RefLteNode.iid = BaseInfo.Stationiid;
             RefLteNode.Location = new IDType()
             {
-                iid = BaseInfo.StationId//唯一识别，同_LteNode.iid一致  //基站ID
+                iid = BaseInfo.Stationiid//唯一识别，同_LteNode.iid一致  //基站ID
             };
             //RefLteNode.Comments = GlobalInfo.Instance.ConfigParam.ProjectNames[0].CityName; //地市--可有可无---毕工确认  @20150808  ---（wjj:根据登录用户获取地市及工程名称）
             RefLteNode.Comments = BaseInfo.CityName; //地市--可有可无---毕工确认  @20150808  ---（wjj:根据登录用户获取地市及工程名称）--由浪潮提供@2016-04-03。

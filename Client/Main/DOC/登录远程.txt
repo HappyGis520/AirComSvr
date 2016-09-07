@@ -1,0 +1,57 @@
+网页打开：116.247.103.234
+
+登录用户名：eaws1
+
+密　　　码：Test_123
+
+
+远程桌面登录 Admin Asset123
+
+
+
+ftp://116.247.103.234/
+
+登录用户名：eaws1
+
+密　　　码：Test_123
+
+
+
+
+
+
+移动远程登录
+
+181272055
+
+Jsmcc2012
+
+账户：administrator	
+
+密码：Jsmcc201407
+
+
+
+数据库登录
+用户名，admin
+
+密码：admin
+
+
+
+移动服务引用：
+
+EAWS :http://10.40.12.80:9093
+
+http://10.40.12.80:9093/AIRCOM/EAWSR
+
+安装目录：C:\Program Files (x86)\Aircom International\EAWS 8.1\Samples
+
+
+
+
+
+
+
+
+

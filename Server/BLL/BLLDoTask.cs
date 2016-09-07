@@ -214,7 +214,7 @@ namespace NetPlan.BLL
                                                     60000))
                                             {
                                                 JLog.Instance.AppInfo("导入XML文件执行完成,判断导入位置数据是否成功...");
-                                                if (InputXmlSuccess(_CurProcData.BaseInfo.StationId, _CurProcData.ProjectName))
+                                                if (InputXmlSuccess(_CurProcData.BaseInfo.Stationiid, _CurProcData.ProjectName))
                                                 //判断导入是否成功，导入成功执行
                                                 {
                                                     JLog.Instance.AppInfo("导入XML文件执行成功,启动EAWS仿真...");

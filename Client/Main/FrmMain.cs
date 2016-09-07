@@ -302,7 +302,7 @@ namespace NetPlanClient
                     Lng = baseInfo.Lng,
                     SaveType = (AirComService.EnumSaveType)(byte)baseInfo.SaveType,
                     StationAlias = baseInfo.StationAlias,
-                    StationId = baseInfo.StationId,
+                    StationId = baseInfo.Stationiid,
                     StationType = (AirComService.EnumStationType)(Byte)baseInfo.StationType
 
                 }; 

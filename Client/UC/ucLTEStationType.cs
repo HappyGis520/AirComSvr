@@ -60,7 +60,7 @@ namespace NetPlanClient.UC
             try
             {
                 AirComLTENodeBaseInfo Info = new AirComLTENodeBaseInfo();
-                Info.StationId = txtStationID.Text.Trim();
+                Info.Stationiid = txtStationID.Text.Trim();
                 Info.StationAlias = txtAlias.Text.Trim();
                 Info.Lng = double.Parse(txtLng.Text.Trim());
                 Info.Lat = double.Parse(txtLat.Text.Trim());

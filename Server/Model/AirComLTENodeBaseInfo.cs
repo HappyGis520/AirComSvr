@@ -30,7 +30,7 @@ namespace NetPlan.Model
         /// <summary>
         /// 基站编号
         /// </summary>
-        public string StationId
+        public string Stationiid
         {
             get { return _StationID; }
             set { _StationID = value; }

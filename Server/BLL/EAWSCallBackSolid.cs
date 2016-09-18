@@ -36,7 +36,6 @@ namespace NetPlan.BLL
                     if (resp == null)
                     {
                         JLog.Instance.AppInfo("服务端返回空信息");
-                        //IDC_RESULT_TEXT.Text += "\n Service Update Failure!!";
                         return;
                     }
                     JLog.Instance.Info("当前所有任务列表如下：");
@@ -76,6 +75,7 @@ namespace NetPlan.BLL
                             if (!string.IsNullOrEmpty(rTaskCompletionRepsonse.OutputLocation))
                             {
                                 JLog.Instance.AppInfo("任务执行完成,输出路径: " + rTaskCompletionRepsonse.OutputLocation.Trim());
+                                RaiseEAWSTaskCompletAckEvent(true, rTaskCompletionRepsonse.OutputLocation.Trim());
                             }
                             else
                             {
@@ -181,38 +181,43 @@ namespace NetPlan.BLL
                     }
                     else if (resp is TaskStatusResponse)
                     {
-                        JLog.Instance.AppInfo("EAWS服务返回任务状态查询结果:");
                         #region TaskStatusResponse
-                        //JLog.Instance.AppInfo("EAWS服务返回任务状态:");
-                        //TaskStatusResponse rTaskStatusResponse = resp as TaskStatusResponse;
+                        TaskStatusResponse rTaskStatusResponse = resp as TaskStatusResponse;
 
-                        ////Call to RequestTaskStatus() was successful when:
-                        ////rTaskStatusResponse is not NULL
-                        ////rTaskStatusResponse is marked with success and
-                        ////GUID of rTaskStatusResponse and rTaskStatusRequest matches 
-                        //if (rTaskStatusResponse.Success)
-                        //{
-                        //    m_JobsRunning.Remove(resp.itemIDRef);
-                        //    IDC_RESULT_TEXT.Text += "\n Task: " + rTaskStatusResponse.TaskName
-                        //        + " Master Guid: " + resp.masterIDRef.ToString()
-                        //        + " Guid: " + rTaskStatusResponse.itemIDRef.ToString();
+                        //Call to RequestTaskStatus() was successful when:
+                        //rTaskStatusResponse is not NULL
+                        //rTaskStatusResponse is marked with success and
+                        //GUID of rTaskStatusResponse and rTaskStatusRequest matches 
+                        if (rTaskStatusResponse.Success)
+                        {
+                            JLog.Instance.AppInfo(string.Format("EAWS服务返回任务状态查询结果:成功，当前仿真结果输出状态{0}", rTaskStatusResponse.NumOutStanding));
+                            if (rTaskStatusResponse.NumOutStanding == 0) //表示输出完成
+                            {
+                                CheckResultOutEvent(true);
+                            }
+                            GlobalInfo.Instance.JobsRunning.Remove(resp.itemIDRef);
+                            //IDC_RESULT_TEXT.Text += "\n Task: " + rTaskStatusResponse.TaskName
+                            //    + " Master Guid: " + resp.masterIDRef.ToString()
+                            //    + " Guid: " + rTaskStatusResponse.itemIDRef.ToString();
 
-                        //    //Access the Number of warnings, Errors, Outstanding pieces of work and
-                        //    //Merge activities of running task.
-                        //    //If Outstanding pieces of work is zero then task is finished
-                        //    IDC_RESULT_TEXT.Text += "\n Succeeded: " + rTaskStatusResponse.NumSucceeded.ToString()
-                        //        + " Warnings: " + rTaskStatusResponse.NumWarning.ToString()
-                        //        + " Errors: " + rTaskStatusResponse.NumError.ToString()
-                        //        + " Outstanding: " + rTaskStatusResponse.NumOutStanding.ToString()
-                        //        + " To Merge: " + rTaskStatusResponse.NumAwaitingMerge.ToString()
-                        //        + rTaskStatusResponse.Status.comment;
-                        //}
-                        //else
-                        //{
-                        //    IDC_RESULT_TEXT.Text += "\n Unable to get status update for Task: "
-                        //        + " Master Guid: " + resp.masterIDRef.ToString()
-                        //        + rTaskStatusResponse.TaskName + " Guid: " + rTaskStatusResponse.itemIDRef.ToString();
-                        //} 
+                            ////Access the Number of warnings, Errors, Outstanding pieces of work and
+                            ////Merge activities of running task.
+                            ////If Outstanding pieces of work is zero then task is finished
+                            //IDC_RESULT_TEXT.Text += "\n Succeeded: " + rTaskStatusResponse.NumSucceeded.ToString()
+                            //    + " Warnings: " + rTaskStatusResponse.NumWarning.ToString()
+                            //    + " Errors: " + rTaskStatusResponse.NumError.ToString()
+                            //    + " Outstanding: " + rTaskStatusResponse.NumOutStanding.ToString()
+                            //    + " To Merge: " + rTaskStatusResponse.NumAwaitingMerge.ToString()
+                            //    + rTaskStatusResponse.Status.comment;
+                        }
+                        else
+                        {
+                            JLog.Instance.AppInfo(string.Format("EAWS服务返回任务状态查询结果:失败"));
+                            CheckResultOutEvent(false);
+                            //IDC_RESULT_TEXT.Text += "\n Unable to get status update for Task: "
+                            //    + " Master Guid: " + resp.masterIDRef.ToString()
+                            //    + rTaskStatusResponse.TaskName + " Guid: " + rTaskStatusResponse.itemIDRef.ToString();
+                        }
                         #endregion
                     }
                     else if (resp is EditTaskRegionResponse)
@@ -461,10 +466,10 @@ namespace NetPlan.BLL
 
         protected  Action<bool,string> EAWSTaskCompletAckEvent;
 
-        protected void SubDoEAWSTaskCompletAck(bool Success , string SavePath)
-        {
-            RaiseEAWSTaskCompletAckEvent( Success,  SavePath);
-        }
+        //protected void SubDoEAWSTaskCompletAck(bool Success , string SavePath)
+        //{
+        //    RaiseEAWSTaskCompletAckEvent( Success,  SavePath);
+        //}
 
         protected void RaiseEAWSTaskCompletAckEvent(bool Success, string SavePath)
         {
@@ -502,6 +507,36 @@ namespace NetPlan.BLL
         public void DeRegistEAWSTaskCompletAckEvent(Action<bool, string> handle)
         {
             EAWSTaskCompletAckEvent = null;
+
+        }
+
+        #endregion
+
+        #region 检查仿真结果输出情况
+
+        protected Action<bool> CheckResultOutEvent;
+
+
+        protected void RaiseCheckResultOutEvent(bool Success)
+        {
+            if (CheckResultOutEvent != null)
+            {
+                CheckResultOutEvent.BeginInvoke(Success, null, null);
+            }
+
+        }
+
+        public void RegistCheckResultOutEvent(Action<bool> handle)
+        {
+            DeRegistCheckResultOutEvent(handle);
+            CheckResultOutEvent = handle;
+
+
+        }
+
+        public void DeRegistCheckResultOutEvent(Action<bool> handle)
+        {
+            CheckResultOutEvent = null;
 
         }
 

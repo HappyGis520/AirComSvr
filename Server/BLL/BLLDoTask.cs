@@ -37,6 +37,7 @@ namespace NetPlan.BLL
             _bllEAWs.RegistEditRegionAckEvent(SubDoEditRegionAck);
             _bllEAWs.RegistEAWSTaskStartStateEvent(SubDoEAWSTaskStartState);
             _bllEAWs.RegistEAWSTaskCompletAckEvent(SubDoEAWSTaskCompletAck);
+            _bllEAWs.RegistCheckResultOutEvent(SubDoCheckResultOut);
 
         }
 
@@ -170,6 +171,8 @@ namespace NetPlan.BLL
                                 if (DoNextTask)
                                 {
                                     JLog.Instance.AppInfo("启动仿真任务完成,等待任务执行完成");
+                                    _bllEAWs.SchemaName = SchemaName;
+                                    _bllEAWs.TaskName = Taskname;
                                     DoNextTask = false;
                                     _ReSet.WaitOne(3600000);
                                     JLog.Instance.AppInfo("_ReSet等待完成，执行下一步操作");
@@ -283,9 +286,10 @@ namespace NetPlan.BLL
                                                                     Thread.Sleep(60000);
 #region 解压文件
                                                                     RepackageFile(SaveFileDir);
-#endregion
+                                                                    #endregion
 
-#region 调用浪潮接口上传
+                                                                    #region 调用浪潮接口上传
+                                                                    JLog.Instance.AppInfo(string.Format("仿真完成，当前城市:{0},基站名称:{1},任务序号{2},保存路径:{3}",_CurProcData.BaseInfo.CityName,_CurProcData.BaseInfo.StationAlias, Taskname, SaveFileDir));
                                                                     JLog.Instance.AppInfo("通知浪潮下载");
                                                                     Inspur.InspurRequestApiModel sendmodel = new Inspur.InspurRequestApiModel()
                                                                     {
@@ -678,12 +682,47 @@ namespace NetPlan.BLL
         }
 
 
-#endregion
+        #endregion
+
+        #region 检查仿真结果输出情况
+
+        protected Action<bool> CheckResultOutEvent;
+
+        protected void SubDoCheckResultOut(bool Success)
+        {
+            //_bllEAWs.CheckResultout()
+            
+        }
+
+        //protected void RaiseCheckResultOutEvent(bool Success)
+        //{
+        //    if (CheckResultOutEvent != null)
+        //    {
+        //        CheckResultOutEvent.BeginInvoke(Success, null, null);
+        //    }
+
+        //}
+
+        //public void RegistCheckResultOutEvent(Action<bool> handle)
+        //{
+        //    DeRegistCheckResultOutEvent(handle);
+        //    CheckResultOutEvent = handle;
+
+
+        //}
+
+        //public void DeRegistCheckResultOutEvent(Action<bool> handle)
+        //{
+        //    CheckResultOutEvent = null;
+
+        //}
+
+        #endregion
 
 
 
 
 
-#endregion
+        #endregion
     }
 }

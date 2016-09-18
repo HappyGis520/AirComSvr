@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.ServiceModel;
+using System.Threading;
 using JLIB.Utility;
 
 using EAWSProxy.ProxyEAWS;
@@ -21,6 +22,15 @@ namespace NetPlan.BLL
          private EAWSCallBackSolid _CallBackHandle = null;
          InstanceContext _callbackContext = null;
         private EAWSClient m_EAWSClient;
+        /// <summary>
+        /// 
+        /// </summary>
+         public string SchemaName = string.Empty;
+         public string TaskName = string.Empty;
+        /// <summary>
+        /// 仿真结果保存路径
+        /// </summary>
+         private string ResultSavePath = string.Empty;
 
         public BLLEAWS()
         {
@@ -37,6 +47,7 @@ namespace NetPlan.BLL
             _CallBackHandle.RegistEditRegionAckEvent(SubDoEditRegionAck);
             _CallBackHandle.RegistEAWSTaskStartStateEvent(SubDoEAWSTaskStartState);
             _CallBackHandle.RegistEAWSTaskCompletAckEvent(SubDoEAWSTaskCompletAck);
+            _CallBackHandle.RegistCheckResultOutEvent(SubDoCheckResultOut);
             
          }
          public void GetAllTasksREQ()
@@ -179,6 +190,39 @@ namespace NetPlan.BLL
 
              }
          }
+        /// <summary>
+        /// 检查仿真结果是否输出
+        /// </summary>
+        /// <returns></returns>
+         public bool SendCheckResultoutRequest()
+         {
+            try
+            {
+                if (string.IsNullOrEmpty(SchemaName) || string.IsNullOrEmpty(TaskName))
+                {
+                    JLog.Instance.AppInfo("SchemaName 和　TaskName都为空,不判断输出结果是否输出完成,默认输出成功");
+                    RaiseCheckResultOutEvent(true);
+                    return false;
+                }
+
+                TaskStatusRequest rStartTaskRequest = new TaskStatusRequest();
+                rStartTaskRequest.itemID = Guid.NewGuid();
+                rStartTaskRequest.SchemaName = SchemaName;
+                rStartTaskRequest.TaskName = TaskName;
+                JLog.Instance.AppInfo(string.Format("发送查询任务状态请求EAWS服务,任务名称{0}", TaskName));
+                JLog.Instance.AppInfo(string.Format("添加EWAW请求－－启动任务任务序号：{0}", rStartTaskRequest.itemID));
+                GlobalInfo.Instance.JobsRunning[rStartTaskRequest.itemID] = rStartTaskRequest;
+                m_EAWSClient.ControlRequest(rStartTaskRequest);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                JLog.Instance.Error(ex.Message, MethodBase.GetCurrentMethod().Name,
+                    MethodBase.GetCurrentMethod().Module.Name);
+                return false;
+
+            }
+        }
 
         #region 自定义事件
 
@@ -275,8 +319,17 @@ namespace NetPlan.BLL
 
         protected void SubDoEAWSTaskCompletAck(bool Success, string SavePath)
         {
-            JLog.Instance.AppInfo("仿真执行结果应答");
-            RaiseEAWSTaskCompletAckEvent(Success, SavePath);
+            JLog.Instance.AppInfo(string.Format("仿真执行结果应答,是否成功：{0}",Success));
+            if (Success)
+            {
+                //RaiseEAWSTaskCompletAckEvent(Success, SavePath);
+                JLog.Instance.AppInfo("仿真完成，查询EAWS仿真结果是否输出完成....");
+                SendCheckResultoutRequest();
+            }
+            else
+            {
+                RaiseEAWSTaskCompletAckEvent(Success, SavePath);
+            }
         }
 
         protected void RaiseEAWSTaskCompletAckEvent(bool Success, string SavePath)
@@ -300,6 +353,58 @@ namespace NetPlan.BLL
         }
 
         #endregion
+
+
+
+         #region 检查仿真结果输出情况
+
+         protected  Action<bool> CheckResultOutEvent;
+        /// <summary>
+        /// 查询数据是否输出成功
+        /// </summary>
+        /// <param name="Success">是否输出成功</param>
+         protected void SubDoCheckResultOut(bool Success)
+         {
+            JLog.Instance.AppInfo(string.Format("EAWS返回查询EAWS仿真数据是否输出成功的应答，结果:{0}",Success));
+             if (Success)
+             {
+                 RaiseCheckResultOutEvent(Success);
+             }
+             else
+             {
+                
+                JLog.Instance.AppInfo(string.Format("EAWS返回查询EAWS仿真数据是否输出成功的应答，结果:{0},暂停一分钟继续查询", Success));
+                Thread.Sleep(600000);//暂停一分钟
+                SendCheckResultoutRequest();
+             }
+         }
+
+         protected void RaiseCheckResultOutEvent(bool Success)
+         {
+             if (CheckResultOutEvent != null)
+             {
+                 CheckResultOutEvent.BeginInvoke(Success,null, null);
+             }
+
+         }
+
+         public void RegistCheckResultOutEvent(Action<bool> handle)
+         {
+             DeRegistCheckResultOutEvent(handle);
+             CheckResultOutEvent = handle;
+
+
+         }
+
+         public void DeRegistCheckResultOutEvent(Action<bool> handle)
+         {
+             CheckResultOutEvent = null;
+
+         }
+
+         #endregion
+
+
 
         #endregion
 

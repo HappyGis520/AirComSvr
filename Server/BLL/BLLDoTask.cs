@@ -87,8 +87,7 @@ namespace NetPlan.BLL
         private void DoWork()
         {
             JLog.Instance.AppInfo("仿真线程已启动.....");
-            JLog.Instance.AppInfo("查询任务状态");
-            _bllEAWs.SendCheckResultoutRequest();
+
             while (true)
             {
 
@@ -155,6 +154,11 @@ namespace NetPlan.BLL
                                 _CurProcData.CoverRadius * 1000, ProjNo);
                             JLog.Instance.AppInfo(string.Format("工程坐标范围为：{0}",
                                 _CurProcData.RegionBound.ToString()));
+                            //JLog.Instance.AppInfo("查询任务状态----------------------------------------------------------------------");
+                            //_bllEAWs.SchemaName = SchemaName;
+                            //_bllEAWs.TaskName = Taskname;
+                            //_bllEAWs.SendCheckResultoutRequest();
+                            //return;
                             _bllEAWs.UpdateRegionREQ(_CurProcData.RegionBound, SchemaName,
                                 Taskname);
                             DoNextTask = false;

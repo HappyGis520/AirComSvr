@@ -209,10 +209,10 @@ namespace NetPlan.BLL
                 rStartTaskRequest.itemID = Guid.NewGuid();
                 rStartTaskRequest.SchemaName = SchemaName;
                 rStartTaskRequest.TaskName = TaskName;
-                JLog.Instance.AppInfo(string.Format("发送查询任务状态请求EAWS服务,任务名称{0}", TaskName));
-                JLog.Instance.AppInfo(string.Format("添加EWAW请求－－启动任务任务序号：{0}", rStartTaskRequest.itemID));
+                JLog.Instance.AppInfo(string.Format("发送查询仿真结果输出状态,任务名称{0},,任务序号：{1}", TaskName, rStartTaskRequest.itemID));
                 GlobalInfo.Instance.JobsRunning[rStartTaskRequest.itemID] = rStartTaskRequest;
                 m_EAWSClient.ControlRequest(rStartTaskRequest);
+                JLog.Instance.AppInfo("发送查询仿真结果输出状态命令成功");
                 return true;
             }
             catch (Exception ex)
@@ -324,11 +324,12 @@ namespace NetPlan.BLL
             {
                 //RaiseEAWSTaskCompletAckEvent(Success, SavePath);
                 JLog.Instance.AppInfo("仿真完成，查询EAWS仿真结果是否输出完成....");
-                Thread.Sleep(60000);
+                Thread.Sleep(600000);
                 SendCheckResultoutRequest();
             }
             else
             {
+                JLog.Instance.AppInfo("仿真失败，不执行查询输出情况的命令");
                 RaiseEAWSTaskCompletAckEvent(Success, SavePath);
             }
         }
@@ -355,9 +356,7 @@ namespace NetPlan.BLL
 
         #endregion
 
-
-
-         #region 检查仿真结果输出情况
+        #region 检查仿真结果输出情况
 
          protected  Action<bool> CheckResultOutEvent;
         /// <summary>
@@ -369,6 +368,7 @@ namespace NetPlan.BLL
             JLog.Instance.AppInfo(string.Format("EAWS返回查询EAWS仿真数据是否输出成功的应答，结果:{0}",Success));
              if (Success)
              {
+                JLog.Instance.AppInfo("仿真数据输出完成");
                  RaiseCheckResultOutEvent(Success);
              }
              else
@@ -404,8 +404,6 @@ namespace NetPlan.BLL
          }
 
          #endregion
-
-
 
         #endregion
 

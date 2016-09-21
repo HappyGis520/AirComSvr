@@ -38,7 +38,7 @@ namespace NetPlan.BLL
                         JLog.Instance.AppInfo("服务端返回空信息");
                         return;
                     }
-                    JLog.Instance.Info("当前所有任务列表如下：");
+                    JLog.Instance.Info(string.Format("服务端返回的任务master GUID{0},GUID:{1}：当前所有任务列表如下：", resp.masterIDRef,resp.itemIDRef));
                     foreach (var key in GlobalInfo.Instance.JobsRunning.Keys)
                     {
                         JLog.Instance.Info(string.Format("key:{0}",key));

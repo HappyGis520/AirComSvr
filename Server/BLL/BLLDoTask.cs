@@ -45,6 +45,7 @@ namespace NetPlan.BLL
         {
             try
             {
+
                 JLog.Instance.AppInfo("外部程序调用，添加仿真数据");
                 Monitor.Enter(PLADatas);
                 JLog.Instance.AppInfo("读取配置文件，获取XML保存目录");
@@ -86,6 +87,8 @@ namespace NetPlan.BLL
         private void DoWork()
         {
             JLog.Instance.AppInfo("仿真线程已启动.....");
+            JLog.Instance.AppInfo("查询任务状态");
+            _bllEAWs.SendCheckResultoutRequest();
             while (true)
             {
 

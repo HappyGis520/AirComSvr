@@ -324,6 +324,7 @@ namespace NetPlan.BLL
             {
                 //RaiseEAWSTaskCompletAckEvent(Success, SavePath);
                 JLog.Instance.AppInfo("仿真完成，查询EAWS仿真结果是否输出完成....");
+                Thread.Sleep(60000);
                 SendCheckResultoutRequest();
             }
             else

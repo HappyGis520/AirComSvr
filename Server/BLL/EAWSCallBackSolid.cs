@@ -181,7 +181,9 @@ namespace NetPlan.BLL
                     }
                     else if (resp is TaskStatusResponse)
                     {
+                        JLog.Instance.AppInfo("EAWS服务返回当前仿真结果输出状态");
                         #region TaskStatusResponse
+
                         TaskStatusResponse rTaskStatusResponse = resp as TaskStatusResponse;
 
                         //Call to RequestTaskStatus() was successful when:
@@ -193,7 +195,7 @@ namespace NetPlan.BLL
                             JLog.Instance.AppInfo(string.Format("EAWS服务返回任务状态查询结果:成功，当前仿真结果输出状态{0}", rTaskStatusResponse.NumOutStanding));
                             if (rTaskStatusResponse.NumOutStanding == 0) //表示输出完成
                             {
-                                CheckResultOutEvent(true);
+                                RaiseCheckResultOutEvent(true);
                             }
                             GlobalInfo.Instance.JobsRunning.Remove(resp.itemIDRef);
                             //IDC_RESULT_TEXT.Text += "\n Task: " + rTaskStatusResponse.TaskName

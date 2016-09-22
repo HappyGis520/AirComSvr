@@ -320,18 +320,19 @@ namespace NetPlan.BLL
         protected void SubDoEAWSTaskCompletAck(bool Success, string SavePath)
         {
             JLog.Instance.AppInfo(string.Format("仿真执行结果应答,是否成功：{0}",Success));
-            if (Success)
-            {
-                //RaiseEAWSTaskCompletAckEvent(Success, SavePath);
-                JLog.Instance.AppInfo("仿真完成，查询EAWS仿真结果是否输出完成....");
-                Thread.Sleep(600000);
-                SendCheckResultoutRequest();
-            }
-            else
-            {
-                JLog.Instance.AppInfo("仿真失败，不执行查询输出情况的命令");
-                RaiseEAWSTaskCompletAckEvent(Success, SavePath);
-            }
+            RaiseEAWSTaskCompletAckEvent(Success, SavePath);
+            //if (Success)
+            //{
+            //    //RaiseEAWSTaskCompletAckEvent(Success, SavePath);
+            //    JLog.Instance.AppInfo("仿真完成，查询EAWS仿真结果是否输出完成....");
+            //    Thread.Sleep(600000);
+            //    SendCheckResultoutRequest();
+            //}
+            //else
+            //{
+            //    JLog.Instance.AppInfo("仿真失败，不执行查询输出情况的命令");
+            //    RaiseEAWSTaskCompletAckEvent(Success, SavePath);
+            //}
         }
 
         protected void RaiseEAWSTaskCompletAckEvent(bool Success, string SavePath)

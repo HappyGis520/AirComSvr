@@ -56,38 +56,39 @@ namespace NetPlan.BLL
                     //Poll status or Completed Job Update
                     if (resp is TaskCompletionResponse)
                     {
-                        JLog.Instance.AppInfo("EAWS服务返回:任务执行完成");
-                        JLog.Instance.AppInfo("从JobsRunning移除任务");
-                        GlobalInfo.Instance.JobsRunning.Remove(resp.itemIDRef);
+                        JLog.Instance.AppInfo("EAWS服务返回:任务执行情况");
+
                         #region TaskCompletionResponse
                         TaskCompletionResponse rTaskCompletionRepsonse = resp as TaskCompletionResponse;
-                        
+
                         //Call to RequestTaskStatus() was successful when:
                         //rTaskStatusResponse is not NULL
                         //rTaskStatusResponse is marked with success and
                         //GUID of rTaskStatusResponse and rTaskStatusRequest matches 
                         if (rTaskCompletionRepsonse.Success)
                         {
-                            JLog.Instance.AppInfo("任务执行完成");
+                            //JLog.Instance.AppInfo("任务执行完成");
 
-                            //GlobalInfo.Instance.JobsRunning.Remove(resp.itemIDRef);
-
-                            if (!string.IsNullOrEmpty(rTaskCompletionRepsonse.OutputLocation))
-                            {
-                                JLog.Instance.AppInfo("任务执行完成,输出路径: " + rTaskCompletionRepsonse.OutputLocation.Trim());
-                                RaiseEAWSTaskCompletAckEvent(true, rTaskCompletionRepsonse.OutputLocation.Trim());
-                            }
-                            else
-                            {
-                                RaiseEAWSTaskCompletAckEvent(true,string.Empty);
-                            }
                             if (rTaskCompletionRepsonse.Finished == true)
                             {
-                                JLog.Instance.AppInfo(string.Format("任务:{0} GUID:{1} 的已结束...", rTaskCompletionRepsonse.TaskName, rTaskCompletionRepsonse.itemIDRef.ToString()));
+                                JLog.Instance.AppInfo(string.Format("任务:{0},Mast GUID{1} GUID:{2} 的已完成 \n {3}...", rTaskCompletionRepsonse.TaskName,rTaskCompletionRepsonse.masterIDRef, rTaskCompletionRepsonse.itemIDRef.ToString(), rTaskCompletionRepsonse.Status.comment));
                                 //IDC_RESULT_TEXT.Text += "\n Task: " + rTaskCompletionRepsonse.TaskName
                                 //       + " Master Guid: " + resp.masterIDRef.ToString()
                                 //       + " Guid: " + resp.itemIDRef.ToString() + " is Complete."
                                 //       + "\n" + resp.Status.comment;
+                                #region 
+                                JLog.Instance.AppInfo("从JobsRunning移除任务");
+                                GlobalInfo.Instance.JobsRunning.Remove(resp.itemIDRef);
+                                if (!string.IsNullOrEmpty(rTaskCompletionRepsonse.OutputLocation))//
+                                {
+                                    JLog.Instance.AppInfo("任务执行完成,输出路径: " + rTaskCompletionRepsonse.OutputLocation.Trim());
+                                    RaiseEAWSTaskCompletAckEvent(true, rTaskCompletionRepsonse.OutputLocation.Trim());
+                                }
+                                else
+                                {
+                                    RaiseEAWSTaskCompletAckEvent(true, string.Empty);
+                                }
+                                #endregion
 
                             }
                             else
@@ -95,7 +96,7 @@ namespace NetPlan.BLL
                                 //IDC_RESULT_TEXT.Text += "\n Task: " + rTaskCompletionRepsonse.TaskName
                                 //    + " Master Guid: " + resp.masterIDRef.ToString()
                                 //    + " Guid: " + resp.itemIDRef.ToString() + " is Running.";
-                                JLog.Instance.AppInfo(string.Format("任务:{0} GUID:{1} 的正在运行...", rTaskCompletionRepsonse.TaskName, rTaskCompletionRepsonse.itemIDRef.ToString()));
+                                JLog.Instance.AppInfo(string.Format("任务:{0},Mast GUID:{1} GUID:{2} 的正在运行...", rTaskCompletionRepsonse.TaskName,rTaskCompletionRepsonse.masterIDRef, rTaskCompletionRepsonse.itemIDRef.ToString()));
                             }
                         }
                         else
@@ -196,6 +197,10 @@ namespace NetPlan.BLL
                             if (rTaskStatusResponse.NumOutStanding == 0) //表示输出完成
                             {
                                 RaiseCheckResultOutEvent(true);
+                            }
+                            else
+                            {
+                                RaiseCheckResultOutEvent(false);
                             }
                             GlobalInfo.Instance.JobsRunning.Remove(resp.itemIDRef);
                             //IDC_RESULT_TEXT.Text += "\n Task: " + rTaskStatusResponse.TaskName

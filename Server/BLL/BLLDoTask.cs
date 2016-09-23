@@ -31,6 +31,8 @@ namespace NetPlan.BLL
         /// </summary>
         private bool DoNextTask = false;
 
+        private string _CurtaskName = string.Empty;
+
         private void CreateNewEAWSHandle()
         {
             _bllEAWs = new BLLEAWS();
@@ -145,6 +147,7 @@ namespace NetPlan.BLL
                                 continue;
                             }
                             var ProjNo = ProjectInfo.UtmID;
+                            _CurtaskName = ProjectInfo.TaskName;
                             JLog.Instance.AppInfo(string.Format("工程投影带号为：{0}", ProjNo));
                             _CurProcData.GetExtend(_CurProcData.BaseInfo.Lng, _CurProcData.BaseInfo.Lat,
                                 out _CurProcData.RegionBound.EastMin,
@@ -188,13 +191,9 @@ namespace NetPlan.BLL
                                         JLog.Instance.AppInfo("仿真任务执行完成");
 
 #region 压缩上传文件
-                                        if (!string.IsNullOrEmpty(EAWSReleaseSaveDir))
+                                        if (string.IsNullOrEmpty(EAWSReleaseSaveDir))
                                         {
-                                            EAWSReleaseSaveDir = string.Format(@"{0}\{1}", EAWSReleaseSaveDir,
-                                                  ProjectInfo.TaskName);
-                                        }
-                                        else
-                                        {
+                
                                             JLog.Instance.AppInfo("BLLEAWS返回的仿真结果保存路径为空，执行中断");
                                             continue;
 
@@ -272,13 +271,9 @@ namespace NetPlan.BLL
                                                                     JLog.Instance.AppInfo("仿真任务执行完成");
 
 #region 压缩上传文件
-                                                                    if (!string.IsNullOrEmpty(EAWSReleaseSaveDir))
+                                                                    if (string.IsNullOrEmpty(EAWSReleaseSaveDir))
                                                                     {
-                                                                        EAWSReleaseSaveDir = string.Format(@"{0}\{1}", EAWSReleaseSaveDir,
-                                                                              ProjectInfo.TaskName);
-                                                                    }
-                                                                    else
-                                                                    {
+                                                          
                                                                         JLog.Instance.AppInfo("BLLEAWS返回的仿真结果保存路径为空，执行中断");
                                                                         continue;
 
@@ -679,7 +674,7 @@ namespace NetPlan.BLL
                 {
                     JLog.Instance.AppInfo("EAWSIM没有返回输出目录，从配置文件获取输出目录");
                     var ename = GetCityEName(_CurProcData.ProjectName);
-                    EAWSReleaseSaveDir = string.Format(GlobalInfo.Instance.ConfigParam.EAWSRealseDir, ename);
+                    EAWSReleaseSaveDir = string.Format(GlobalInfo.Instance.ConfigParam.EAWSRealseDir, ename,_CurtaskName);
                     JLog.Instance.AppInfo(string.Format("从配置文件获取输出目录{0}", EAWSReleaseSaveDir));
 
                 }

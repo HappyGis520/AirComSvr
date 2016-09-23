@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -82,6 +83,7 @@ namespace NetPlan.BLL
                                 if (!string.IsNullOrEmpty(rTaskCompletionRepsonse.OutputLocation))//
                                 {
                                     JLog.Instance.AppInfo("任务执行完成,输出路径: " + rTaskCompletionRepsonse.OutputLocation.Trim());
+                                    
                                     RaiseEAWSTaskCompletAckEvent(true, rTaskCompletionRepsonse.OutputLocation.Trim());
                                 }
                                 else
